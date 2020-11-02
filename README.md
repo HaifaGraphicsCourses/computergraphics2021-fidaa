@@ -1,8 +1,8 @@
 # Computer Graphics 203.3710
 ## Students Team data
 
-Name: 'Your real name'  
-Student Number: 'Your student number'
+Name: 'Fidaa shkeer'  
+Student Number: '318483971'
 
 Name: 'Your real name'  
 Student Number: 'Your student number'
