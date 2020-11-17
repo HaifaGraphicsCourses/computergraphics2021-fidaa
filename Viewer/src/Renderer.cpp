@@ -297,6 +297,7 @@ void Renderer::Render(const Scene& scene)
 {
 	
 	const glm::ivec3 c1(1, 0, 1);
+	/*
 	int r = 100, a = 50;
 	float temp = 2.f * M_PI / a;
 	const glm::ivec2 p1(400, 500);
@@ -306,8 +307,73 @@ void Renderer::Render(const Scene& scene)
 		DrawLine(p1, p2,c1);
 	
 	}
+	glm::ivec2 D1(100, 200);
+	glm::ivec2 D2(400, 200);
+	glm::ivec2 D3(150, 300);
+	glm::ivec2 D4(350, 300);
+	glm::ivec2 D5(250, 20);
+	glm::ivec2 D6(250, 300);
+	glm::ivec2 D7(200, 200);
+	glm::ivec2 D8(300, 200);
+
+	DrawLine(D1, D2, c1);
+	DrawLine(D1, D5, c1);
+	DrawLine(D1, D3, c1);
+	DrawLine(D2, D5, c1);
+	DrawLine(D2, D4, c1);
+	DrawLine(D3, D4, c1);
+	DrawLine(D3, D7, c1);
+	DrawLine(D6, D7, c1);
+	DrawLine(D6, D8, c1);
+	DrawLine(D4, D8, c1);*/
+
+	glm::ivec2 D1(500, 0);
+	glm::ivec2 D2(700, 300);
+	glm::ivec2 D3(700, 600);
+	glm::ivec2 D4(950, 700);
+	glm::ivec2 D5(800, 500);
+	glm::ivec2 D6(850, 200);
+	glm::ivec2 D7(550, 150);
+	glm::ivec2 D8(580, 240);
+
+	glm::ivec2 D9(300, 300);
+	glm::ivec2 D10(300, 600);
+	glm::ivec2 D11(50, 700);
+	glm::ivec2 D12(200, 500);
+	glm::ivec2 D13(150, 200);
+	glm::ivec2 D14(450, 150);
+	glm::ivec2 D15(420, 240);
+	
 
 
+
+	
+	DrawLine(D1, D2, c1);
+	DrawLine(D1, D3, c1);
+	DrawLine(D3, D4, c1);
+	DrawLine(D3, D5, c1);
+	DrawLine(D4, D5, c1);
+	DrawLine(D5, D6, c1);
+	DrawLine(D6, D7, c1);
+	DrawLine(D2, D6, c1);
+	DrawLine(D2, D5, c1);
+	DrawLine(D2, D8, c1);
+	DrawLine(D2, D3, c1);
+
+	DrawLine(D1, D9, c1);
+	DrawLine(D1, D10, c1);
+	DrawLine(D10, D11, c1);
+	DrawLine(D11, D12, c1);
+	DrawLine(D12, D13, c1);
+	DrawLine(D13, D14, c1);
+	DrawLine(D12, D10, c1);
+	DrawLine(D10, D3, c1);
+	DrawLine(D9, D12, c1);
+	DrawLine(D13, D9, c1);
+	DrawLine(D9, D10, c1);
+	DrawLine(D9, D15, c1);
+
+	
 
 
 }
