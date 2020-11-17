@@ -33,7 +33,132 @@ void Renderer::PutPixel(int i, int j, const glm::vec3& color)
 
 void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color)
 {
-	// TODO: Implement bresenham algorithm
+	// TODO: Implement bresenham algorithm #################################################################
+	// 0 < a < 1
+	int dx = p2.x - p1.x;
+	int dy = p2.y - p1.y;
+	if (abs(dy) < abs(dx))
+	{
+		if (p1.x < p2.x)
+		{
+			int x1 = p1.x;
+			int y1 = p1.y;
+			int yi = 1;
+			int e = -dx;
+			if (dy < 0)
+			{
+				yi = -1;
+				dy = -dy;
+			}
+			while (x1 <= p2.x)
+			{
+				if (e > 0)
+				{
+					y1 += yi;
+					e -= 2 * dx;
+				}
+				PutPixel(x1, y1, color);
+				x1 += 1;
+				e += 2 * dy;
+
+			}
+		}
+		else if (p1.x > p2.x)
+		{
+			int x2 = p2.x;
+			int y2 = p2.y;
+			int yi = 1;
+			int e;
+			dx = p1.x - p2.x;
+			dy = p1.y - p2.y;
+			e = -dx;
+			
+			if (dy < 0)
+			{
+				yi = -1;
+				dy = -dy;
+			}
+			while (x2 <= p1.x)
+			{
+				if (e > 0)
+				{
+					y2 += yi;
+					e -= 2 * dx;
+				}
+				PutPixel(x2, y2, color);
+				x2 += 1;
+				e += 2 * dy;
+
+			}
+
+		}
+	}
+	else
+	{
+		if (p1.y < p2.y)
+		{
+
+			int x1 = p1.x;
+			int y1 = p1.y;
+			int xi = 1;
+			int e;
+			dx = p2.x - p1.x;
+			dy = p2.y - p1.y;
+			e = -dy;
+
+			if (dx < 0)
+			{
+				xi = -1;
+				dx = -dx;
+			}
+			while (y1 <= p2.y)
+			{
+				if (e > 0)
+				{
+					x1 += xi;
+					e -= 2 * dy;
+				}
+				PutPixel(x1, y1, color);
+				y1 += 1;
+				e += 2 * dx;
+
+			}
+			
+
+		}
+		else if (p1.y > p2.y)
+		{
+			int x2 = p2.x;
+			int y2 = p2.y;
+			int xi = 1;
+			int e;
+			dx = p1.x - p2.x;
+			dy = p1.y - p2.y;
+			e = -dy;
+
+			if (dx < 0)
+			{
+				xi = -1;
+				dx = -dx;
+			}
+			while (y2 <= p1.y)
+			{
+				if (e > 0)
+				{
+					x2 += xi;
+					e -= 2 * dy;
+				}
+				PutPixel(x2, y2, color);
+				y2 += 1;
+				e += 2 * dx;
+
+			}
+
+
+
+		}
+
+	}
 	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 }
 
@@ -170,26 +295,21 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(const Scene& scene)
 {
-	// TODO: Replace this code with real scene rendering code
-	int half_width = viewport_width_ / 2;
-	int half_height = viewport_height_ / 2;
-	int thickness = 15;
 	
-	for(int i = 0; i < viewport_width_; i++)
+	const glm::ivec3 c1(1, 0, 1);
+	int r = 100, a = 50;
+	float temp = 2.f * M_PI / a;
+	const glm::ivec2 p1(400, 500);
+	for (int i = 0; i <= a; i++)
 	{
-		for (int j = half_height - thickness; j < half_height + thickness; j++)
-		{
-			PutPixel(i, j, glm::vec3(1, 1, 0));
-		}
+		glm::ivec2 p2 = glm::ivec2(p1.x + r * sin(temp * i), p1.y + r*cos(temp * i));
+		DrawLine(p1, p2,c1);
+	
 	}
 
-	for (int i = 0; i < viewport_height_; i++)
-	{
-		for (int j = half_width - thickness; j < half_width + thickness; j++)
-		{
-			PutPixel(j, i, glm::vec3(1, 0, 1));
-		}
-	}
+
+
+
 }
 
 int Renderer::GetViewportWidth() const
