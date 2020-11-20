@@ -3,6 +3,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 #include "Utils.h"
 
@@ -26,6 +30,9 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
 	std::ifstream ifile(filePath.c_str());
+	glm::vec3 Vertex;
+	float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0, MAX = 0;
+	
 
 	// while not end of file
 	while (!ifile.eof())
@@ -43,7 +50,32 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		// based on the type parse data
 		if (lineType == "v")
 		{
-			vertices.push_back(Utils::Vec3fFromStream(issLine));
+			Vertex = Utils::Vec3fFromStream(issLine);
+			if(Vertex.x > maxX)
+			{
+				maxX = Vertex.x;
+			}
+			if (Vertex.x < minX)
+			{
+				minX = Vertex.x;
+			}
+			if (Vertex.y > maxY)
+			{
+				maxY = Vertex.y;
+			}
+			if (Vertex.y < minY)
+			{
+				minY = Vertex.y;
+			}
+			if (Vertex.z > maxZ)
+			{
+				maxZ = Vertex.z;
+			}
+			if (Vertex.z < minZ)
+			{
+				minZ = Vertex.z;
+			}
+			vertices.push_back(Vertex);
 		}
 		else if (lineType == "vn")
 		{
@@ -65,9 +97,23 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		{
 			std::cout << "Found unknown line Type \"" << lineType << "\"";
 		}
-	}
 
-	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath));
+	}
+	if(maxX>= maxY && maxX >= maxZ)
+	{
+		MAX = maxX;
+	}
+	if (maxY >= maxX && maxY >= maxZ)
+	{
+		MAX = maxY;
+	}
+	if (maxZ >= maxY && maxZ >= maxX)
+	{
+		MAX = maxZ;
+	}
+	glm::mat4x4 ScalingMat = glm::scale(glm::vec3(350 / MAX, 350 / MAX, 350 / MAX));
+	glm::mat4x4 TranMat = glm::translate(glm::vec3(abs(minX), abs(minY), abs(minZ)));
+	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath),ScalingMat*TranMat);
 }
 
 std::string Utils::GetFileName(const std::string& filePath)

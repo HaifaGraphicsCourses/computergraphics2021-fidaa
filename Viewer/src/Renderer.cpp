@@ -297,84 +297,32 @@ void Renderer::Render(const Scene& scene)
 {
 	
 	const glm::ivec3 c1(1, 0, 1);
-	/*
-	int r = 100, a = 50;
-	float temp = 2.f * M_PI / a;
-	const glm::ivec2 p1(400, 500);
-	for (int i = 0; i <= a; i++)
+	int index0, index1, index2;
+	glm::vec3 v0, v1, v2;
+	glm::vec4 h0, h1, h2;
+	glm::mat4x4 Stmat;
+	if (scene.GetModelCount())
 	{
-		glm::ivec2 p2 = glm::ivec2(p1.x + r * sin(temp * i), p1.y + r*cos(temp * i));
-		DrawLine(p1, p2,c1);
-	
+		auto model = scene.GetActiveModel();
+		Stmat = model.GetSTmat();
+		for (int i = 0; i < model.GetFacesCount(); i++)
+		{
+			index0 = model.GetFace(i).GetVertexIndex(0);
+			index1 = model.GetFace(i).GetVertexIndex(1);
+			index2 = model.GetFace(i).GetVertexIndex(2);
+			v0 = model.GetVertex(index0);
+			v1 = model.GetVertex(index1);
+			v2 = model.GetVertex(index2);
+			h0 = Stmat *glm::vec4(v0, 1);
+			h1 = Stmat *glm::vec4(v1, 1);
+			h2 = Stmat *glm::vec4(v2, 1);
+			DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h1.x / h1.w, h1.y / h1.w),c1);
+			DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
+			DrawLine(glm::ivec2(h1.x / h1.w, h1.y / h1.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
+			
+		}
 	}
-	glm::ivec2 D1(100, 200);
-	glm::ivec2 D2(400, 200);
-	glm::ivec2 D3(150, 300);
-	glm::ivec2 D4(350, 300);
-	glm::ivec2 D5(250, 20);
-	glm::ivec2 D6(250, 300);
-	glm::ivec2 D7(200, 200);
-	glm::ivec2 D8(300, 200);
-
-	DrawLine(D1, D2, c1);
-	DrawLine(D1, D5, c1);
-	DrawLine(D1, D3, c1);
-	DrawLine(D2, D5, c1);
-	DrawLine(D2, D4, c1);
-	DrawLine(D3, D4, c1);
-	DrawLine(D3, D7, c1);
-	DrawLine(D6, D7, c1);
-	DrawLine(D6, D8, c1);
-	DrawLine(D4, D8, c1);*/
-
-	glm::ivec2 D1(500, 0);
-	glm::ivec2 D2(700, 300);
-	glm::ivec2 D3(700, 600);
-	glm::ivec2 D4(950, 700);
-	glm::ivec2 D5(800, 500);
-	glm::ivec2 D6(850, 200);
-	glm::ivec2 D7(550, 150);
-	glm::ivec2 D8(580, 240);
-
-	glm::ivec2 D9(300, 300);
-	glm::ivec2 D10(300, 600);
-	glm::ivec2 D11(50, 700);
-	glm::ivec2 D12(200, 500);
-	glm::ivec2 D13(150, 200);
-	glm::ivec2 D14(450, 150);
-	glm::ivec2 D15(420, 240);
 	
-
-
-
-	
-	DrawLine(D1, D2, c1);
-	DrawLine(D1, D3, c1);
-	DrawLine(D3, D4, c1);
-	DrawLine(D3, D5, c1);
-	DrawLine(D4, D5, c1);
-	DrawLine(D5, D6, c1);
-	DrawLine(D6, D7, c1);
-	DrawLine(D2, D6, c1);
-	DrawLine(D2, D5, c1);
-	DrawLine(D2, D8, c1);
-	DrawLine(D2, D3, c1);
-
-	DrawLine(D1, D9, c1);
-	DrawLine(D1, D10, c1);
-	DrawLine(D10, D11, c1);
-	DrawLine(D11, D12, c1);
-	DrawLine(D12, D13, c1);
-	DrawLine(D13, D14, c1);
-	DrawLine(D12, D10, c1);
-	DrawLine(D10, D3, c1);
-	DrawLine(D9, D12, c1);
-	DrawLine(D13, D9, c1);
-	DrawLine(D9, D10, c1);
-	DrawLine(D9, D15, c1);
-
-	
-
 
 }
 
