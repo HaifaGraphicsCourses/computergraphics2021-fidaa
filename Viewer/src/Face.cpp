@@ -1,6 +1,7 @@
 #pragma once
 #include <istream>
 #include "Face.h"
+#include <iostream>
 
 Face::Face(std::istream& issLine)
 {

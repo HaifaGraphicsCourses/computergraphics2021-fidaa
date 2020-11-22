@@ -1,4 +1,6 @@
 #include "MeshModel.h"
+#include <iostream>
+
 
 MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4 T) :
 	faces_(faces),
@@ -35,4 +37,33 @@ const glm::vec3 MeshModel::GetVertex(int index) const
 const glm::mat4x4 MeshModel::GetSTmat() const
 {
 	return STmat;
+}
+void MeshModel::PrintFaces() const
+{
+	int index;
+	for (int i = 0; i <faces_.size(); i++)
+	{
+		std::cout << "the vartices of face i :";
+		index = faces_[i].GetVertexIndex(0);
+		std::cout <<'(' << vertices_[index-1].x << ','<< vertices_[index-1].y << ','<< vertices_[index-1].z << ')';
+		index = faces_[i].GetVertexIndex(1);
+		std::cout << '(' << vertices_[index-1].x << ',' << vertices_[index-1].y << ',' << vertices_[index-1].z << ')';
+		index = faces_[i].GetVertexIndex(2);
+		std::cout << '(' << vertices_[index-1].x << ',' << vertices_[index-1].y << ',' << vertices_[index-1].z << ')';
+		std::cout << "\n";
+
+	}
+	
+	return;
+}
+void MeshModel::PrintVertices()const
+{
+	glm::vec3 vtemp;
+	std::cout << "all the  vertices:";
+	for (int i = 1; i < vertices_.size(); i++)
+	{
+		std::cout << '(' << vertices_[i - 1].x << ',' << vertices_[i - 1].y << ',' << vertices_[i - 1].z << ')';
+		std::cout << "\n";
+
+	}
 }

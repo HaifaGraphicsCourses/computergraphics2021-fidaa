@@ -13,6 +13,9 @@ public:
 	const std::string& GetModelName() const;
 	const glm::vec3 GetVertex(int index) const;
 	const glm::mat4x4 GetSTmat() const;
+	void PrintFaces() const;
+	void PrintVertices()const;
+
 
 private:
 	std::vector<Face> faces_;

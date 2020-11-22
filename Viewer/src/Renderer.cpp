@@ -305,7 +305,7 @@ void Renderer::Render(const Scene& scene)
 	{
 		auto model = scene.GetActiveModel();
 		Stmat = model.GetSTmat();
-		for (int i = 0; i < model.GetFacesCount(); i++)
+		for (int i = 0; i < model.GetFacesCount(); i++)   // #2
 		{
 			index0 = model.GetFace(i).GetVertexIndex(0);
 			index1 = model.GetFace(i).GetVertexIndex(1);
@@ -321,8 +321,14 @@ void Renderer::Render(const Scene& scene)
 			DrawLine(glm::ivec2(h1.x / h1.w, h1.y / h1.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
 			
 		}
+		
+	/*	// #1
+		model.PrintFaces();
+
+		model.PrintVertices();
+		exit(0); */ 
 	}
-	
+	return;
 
 }
 

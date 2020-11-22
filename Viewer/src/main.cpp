@@ -5,9 +5,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <nfd.h>
+#include <iostream>
 
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 #include "Renderer.h"
 #include "Scene.h"
@@ -216,7 +221,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
-		static float f = 0.0f;
+		static float f = 0.0f, ft = 0.0f;
 		static int counter = 0;
 
 		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
@@ -232,8 +237,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			counter++;
 		ImGui::SameLine();
 		ImGui::Text("counter = %d", counter);
+		//ImGui::SliderFloat("transformation ", &ft, 0.0f, 1.0f);
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		
 		ImGui::End();
 	}
 
@@ -249,8 +256,43 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	
 	if(scene.GetModelCount())
 	{
+		
+		const char* listbox_items[] = {"local transformation","world transformation"};
+		static int listbox_item_current = 0;
+		int scale = 0, trans = 0, rotate = 0;
 		ImGui::Begin("transformation");
-		//ImGui::ListBox();
+	    ImGui::ListBox("select\n", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items),2);
+		
+		
+		trans = ImGui::SmallButton("translation");
+
+		rotate =ImGui::SmallButton("Rotation");
+		scale = ImGui::SmallButton("scale");
+		//static float f1 = 0.00f;
+		//ImGui::SliderFloat("slider float", &f1, 0.0f,500);
+
+		static float angle = 0.0f;
+		ImGui::SliderAngle("slider angle", &angle);
+		float ret;
+		static float XY[4] = { 0.0f, 0.0f, 0.0f };
+	    ImGui::InputFloat("X", &XY[0]);
+	    ImGui::InputFloat("Y", &XY[1]);
+	    ImGui::InputFloat("Z", &XY[2]);
+		//std::cout << XY[0];
+		//std::cout << XY[1];
+		//std::cout << "\n";
+		if (listbox_item_current == 0)
+		{ 
+			
+
+		      
+			//if (ImGui::SmallButton("translation")) {};
+
+		       //if (ImGui::SmallButton("Rotation")) {};
+		
+		}
+
+
 		ImGui::End();
 
 	}
