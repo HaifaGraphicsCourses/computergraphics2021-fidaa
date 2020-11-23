@@ -4,6 +4,8 @@
 
 #include "Renderer.h"
 #include "InitShader.h"
+#include <iostream>
+
 
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
@@ -300,27 +302,41 @@ void Renderer::Render(const Scene& scene)
 	int index0, index1, index2;
 	glm::vec3 v0, v1, v2;
 	glm::vec4 h0, h1, h2;
-	glm::mat4x4 Stmat;
+	glm::vec4 V0new, V1new, V2new;
+	glm::mat4x4 Stmat,transmat;
 	if (scene.GetModelCount())
 	{
 		auto model = scene.GetActiveModel();
 		Stmat = model.GetSTmat();
-		for (int i = 0; i < model.GetFacesCount(); i++)   // #2
+		
+		
+		
+		for (int i = 0; i < scene.GetActiveModel().GetFacesCount(); i++)   // #2
 		{
-			index0 = model.GetFace(i).GetVertexIndex(0);
-			index1 = model.GetFace(i).GetVertexIndex(1);
-			index2 = model.GetFace(i).GetVertexIndex(2);
-			v0 = model.GetVertex(index0);
-			v1 = model.GetVertex(index1);
-			v2 = model.GetVertex(index2);
-			h0 = Stmat *glm::vec4(v0, 1);
-			h1 = Stmat *glm::vec4(v1, 1);
-			h2 = Stmat *glm::vec4(v2, 1);
-			DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h1.x / h1.w, h1.y / h1.w),c1);
-			DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
-			DrawLine(glm::ivec2(h1.x / h1.w, h1.y / h1.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
+			index0 = scene.GetActiveModel().GetFace(i).GetVertexIndex(0);
+			index1 = scene.GetActiveModel().GetFace(i).GetVertexIndex(1);
+			index2 = scene.GetActiveModel().GetFace(i).GetVertexIndex(2);
+			v0 = scene.GetActiveModel().GetVertex(index0);
+			v1 = scene.GetActiveModel().GetVertex(index1);
+			v2 = scene.GetActiveModel().GetVertex(index2);
+			//h0 = Stmat *glm::vec4(v0, 1);
+			//h1 = Stmat *glm::vec4(v1, 1);
+			//h2 = Stmat *glm::vec4(v2, 1);
+			transmat = scene.GetActiveModel().Get_transmatrix() * Stmat;
+			V0new = transmat * glm::vec4(v0, 1);
+			//std::cout << V0new.x << "\n";
+			V1new = transmat * glm::vec4(v1, 1);
+			V2new = transmat * glm::vec4(v2, 1);
+			//DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h1.x / h1.w, h1.y / h1.w),c1);
+			//DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
+			//DrawLine(glm::ivec2(h1.x / h1.w, h1.y / h1.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
+			DrawLine(glm::ivec2(V0new.x / V0new.w, V0new.y / V0new.w), glm::ivec2(V1new.x / V1new.w, V1new.y / V1new.w),c1);
+			DrawLine(glm::ivec2(V0new.x / V0new.w, V0new.y / V0new.w), glm::ivec2(V2new.x / V2new.w, V2new.y / V2new.w),c1);
+			DrawLine(glm::ivec2(V1new.x / V1new.w, V1new.y / V1new.w), glm::ivec2(V2new.x / V2new.w, V2new.y / V2new.w),c1);
+			//model.printmat();
 			
 		}
+		
 		
 	/*	// #1
 		model.PrintFaces();

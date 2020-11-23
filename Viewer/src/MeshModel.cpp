@@ -1,6 +1,8 @@
 #include "MeshModel.h"
 #include <iostream>
-
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4 T) :
 	faces_(faces),
@@ -58,7 +60,7 @@ void MeshModel::PrintFaces() const
 }
 void MeshModel::PrintVertices()const
 {
-	glm::vec3 vtemp;
+	
 	std::cout << "all the  vertices:";
 	for (int i = 1; i < vertices_.size(); i++)
 	{
@@ -66,4 +68,65 @@ void MeshModel::PrintVertices()const
 		std::cout << "\n";
 
 	}
+}
+void MeshModel::Set_Tw_mat(glm::mat4x4& transformation)
+{
+	Tw = transformation;
+}
+
+void MeshModel::Set_Sw_mat(glm::mat4x4& transformation)
+{
+	this->Sw = transformation;
+
+}
+
+void MeshModel::Set_Tm_mat(glm::mat4x4& transformation)
+{
+	Tm = transformation;
+	//std::cout <<"im in the set" << x << y << z << "\n";
+
+}
+
+void MeshModel::Set_Sm_mat(glm::mat4x4& transformation)
+{
+	Sm = transformation;
+
+}
+
+void MeshModel::Set_Rw_mat(glm::mat4x4& transformation)
+{
+	Rw = transformation;
+	
+
+}
+
+void MeshModel::Set_Rm_mat(glm::mat4x4& transformation)
+{
+	Rm = transformation;
+
+}
+
+void MeshModel::Set_transmatrix()
+{
+	this->transmatrix = Sw * Rw * Tw * Sm * Rm * Tm;
+}
+const glm::mat4x4 MeshModel::Get_transmatrix() const
+{
+
+	return this->transmatrix;
+	
+}
+void MeshModel::printmat() const
+{
+	std::cout << "\n ********* im Trans *********** \n";
+	for (int j = 0; j < 4; j++)
+	{
+		for (int k = 0; k < 4; k++)
+		{
+			std::cout << transmatrix[j][k] << ",";
+
+		}
+		std::cout << "\n";
+	}
+
 }

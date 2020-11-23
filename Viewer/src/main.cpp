@@ -23,6 +23,11 @@
  */
 bool show_demo_window = false;
 bool show_another_window = false;
+bool Tm = false, Sm = false, Rm = false;
+bool Tw = false, Sw = false, Rw = false;
+bool rtxm = false,rtym = false, rtzm = false;
+bool rtxw = false,rtyw = false, rtzw = false;
+
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 
 /**
@@ -253,7 +258,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			show_another_window = false;
 		ImGui::End();
 	}
-	
+
 	if(scene.GetModelCount())
 	{
 		
@@ -263,34 +268,131 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::Begin("transformation");
 	    ImGui::ListBox("select\n", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items),2);
 		
+
+		static float anglem = 0.0f;
+		static float anglew = 0.0f;
 		
-		trans = ImGui::SmallButton("translation");
+		
+		static float Tm_vec[3] = { 0.0f, 0.0f, 0.0f };
+		static float Tw_vec[3] = { 0.0f, 0.0f, 0.0f };
+		static float Sm_vec[3] = { 1.0f, 1.0f, 1.0f };
+		static float Sw_vec[3] = { 1.0f, 1.0f, 1.0f };
+		
+	
 
-		rotate =ImGui::SmallButton("Rotation");
-		scale = ImGui::SmallButton("scale");
-		//static float f1 = 0.00f;
-		//ImGui::SliderFloat("slider float", &f1, 0.0f,500);
 
-		static float angle = 0.0f;
-		ImGui::SliderAngle("slider angle", &angle);
-		float ret;
-		static float XY[4] = { 0.0f, 0.0f, 0.0f };
-	    ImGui::InputFloat("X", &XY[0]);
-	    ImGui::InputFloat("Y", &XY[1]);
-	    ImGui::InputFloat("Z", &XY[2]);
-		//std::cout << XY[0];
-		//std::cout << XY[1];
-		//std::cout << "\n";
-		if (listbox_item_current == 0)
-		{ 
+		
+		if (listbox_item_current == 0) //local(modle)
+		{
+			
+			ImGui::Checkbox("translation", &Tm);
+			if (Tm)
+			{
+
+				ImGui::InputFloat("tranlation x steps", &Tm_vec[0]);
+				ImGui::InputFloat("tranlation y steps", &Tm_vec[1]);
+				ImGui::InputFloat("tranlation z steps", &Tm_vec[2]);
+
+				scene.GetActiveModel().Set_Tm_mat(glm::translate(glm::vec3(Tm_vec[0], Tm_vec[1], Tm_vec[2])));
+
+
+			}
+			ImGui::Checkbox("Rotation", &Rm);
+			if (Rm)
+			{
+				ImGui::Checkbox("Rotate around x", &rtxm);
+				ImGui::Checkbox("Rotate around y", &rtym);
+				ImGui::Checkbox("Rotate around z", &rtzm);
+				ImGui::SliderAngle("slider angle", &anglem, -360, 360);
+				if (rtxm || (rtym || rtzm))
+				{
+					scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglem, glm::vec3(rtxm, rtym, rtzm)));
+				}
+				else
+				{
+					scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglem, glm::vec3(1,1,1)));
+				}
+				
+
+			}
+			ImGui::Checkbox("scale", &Sm);
+			
+			auto model = scene.GetActiveModel();
+			
+			if (Sm)
+			{
+
+				ImGui::InputFloat("X", &Sm_vec[0]);
+				ImGui::InputFloat("Y", &Sm_vec[1]);
+				ImGui::InputFloat("Z", &Sm_vec[2]);
+
+				scene.GetActiveModel().Set_Sm_mat(glm::scale(glm::vec3(Sm_vec[0], Sm_vec[1], Sm_vec[2])));
+				
+			}
 			
 
 		      
-			//if (ImGui::SmallButton("translation")) {};
-
-		       //if (ImGui::SmallButton("Rotation")) {};
-		
 		}
+		else //world
+		{
+
+
+			ImGui::Checkbox("translation", &Tw);
+			if (Tw)
+			{
+
+				ImGui::InputFloat("tranlation x steps", &Tw_vec[0]);
+				ImGui::InputFloat("tranlation y steps", &Tw_vec[1]);
+				ImGui::InputFloat("tranlation z steps", &Tw_vec[2]);
+
+				scene.GetActiveModel().Set_Tw_mat(glm::translate(glm::vec3(Tw_vec[0], Tw_vec[1], Tw_vec[2])));
+
+			}
+			ImGui::Checkbox("Rotation", &Rw);
+			if (Rw)
+			{
+
+				ImGui::Checkbox("Rotate around x", &rtxw);
+				ImGui::Checkbox("Rotate around y", &rtyw);
+				ImGui::Checkbox("Rotate around z", &rtzw);
+				//model.Set_Rw_mat(XY[0], XY[1], XY[2], angle);
+				ImGui::SliderAngle("slider angle", &anglew, -360, 360);
+				if (rtxw || (rtyw || rtzw))
+				{
+					scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglew, glm::vec3(rtxw, rtyw, rtzw)));
+				}
+				else
+				{
+					scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglew, glm::vec3(1, 1, 1)));
+				}
+				//scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglew, glm::vec3(rtxw, rtyw, rtzw)));
+
+			}
+			
+			ImGui::Checkbox("scale", &Sw);
+			
+			auto model = scene.GetActiveModel();
+			if (Sw)
+			{
+
+				ImGui::InputFloat("X", &Sw_vec[0]);
+				ImGui::InputFloat("Y", &Sw_vec[1]);
+				ImGui::InputFloat("Z", &Sw_vec[2]);
+
+				scene.GetActiveModel().Set_Sw_mat(glm::scale(glm::vec3(Sw_vec[0], Sw_vec[1], Sw_vec[2])));
+
+			}
+			
+			
+
+		}
+		scene.GetActiveModel().Set_transmatrix();
+		/*if (print)
+		{
+			auto model = scene.GetActiveModel();
+			model.printmat();
+		}*/
+
 
 
 		ImGui::End();

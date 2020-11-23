@@ -113,6 +113,14 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	}
 	glm::mat4x4 ScalingMat = glm::scale(glm::vec3(350 / MAX, 350 / MAX, 350 / MAX));
 	glm::mat4x4 TranMat = glm::translate(glm::vec3(abs(minX), abs(minY), abs(minZ)));
+	glm::mat4x4 Tm = glm::mat4(1.0f);
+	glm::mat4x4 Tw = glm::mat4(1.0f);
+	glm::mat4x4 Rw = glm::mat4(1.0f);
+	glm::mat4x4 Sw = glm::mat4(1.0f);
+	//glm::mat4x4 Tm;
+	glm::mat4x4 Rm = glm::mat4(1.0f);
+	glm::mat4x4 Sm = glm::mat4(1.0f);
+	glm::mat4x4 transmatrix = Sw * Rw * Tw * Sm * Rm * Tm;
 	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath),ScalingMat*TranMat);
 }
 
