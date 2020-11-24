@@ -45,7 +45,7 @@ void MeshModel::PrintFaces() const
 	int index;
 	for (int i = 0; i <faces_.size(); i++)
 	{
-		std::cout << "the vartices of face i :";
+		std::cout << "the vartices of face" <<i<< ":";
 		index = faces_[i].GetVertexIndex(0);
 		std::cout <<'(' << vertices_[index-1].x << ','<< vertices_[index-1].y << ','<< vertices_[index-1].z << ')';
 		index = faces_[i].GetVertexIndex(1);

@@ -338,11 +338,12 @@ void Renderer::Render(const Scene& scene)
 		}
 		
 		
-	/*	// #1
+		// #1 
+		/*
 		model.PrintFaces();
 
 		model.PrintVertices();
-		exit(0); */ 
+		exit(0); */
 	}
 	return;
 
