@@ -93,16 +93,39 @@ void MeshModel::Set_Sm_mat(glm::mat4x4& transformation)
 
 }
 
-void MeshModel::Set_Rw_mat(glm::mat4x4& transformation)
+void MeshModel::Set_Rw_mat(glm::mat4x4& transformation,int flag)
 {
-	Rw = transformation;
-	
+	if (flag == 0)
+	{
+		Rw_x = transformation;
+	}
+	if (flag == 1)
+	{
+		Rw_y = transformation;
+	}
+	if (flag == 2)
+	{
+		Rw_z = transformation;
+	}
+	Rw = Rw_z * Rw_y * Rw_x;
 
 }
 
-void MeshModel::Set_Rm_mat(glm::mat4x4& transformation)
+void MeshModel::Set_Rm_mat(glm::mat4x4& transformation, int flag)
 {
-	Rm = transformation;
+	if (flag == 0)
+	{
+		Rm_x = transformation;
+	}
+	if (flag == 1)
+	{
+		Rm_y = transformation;
+	}
+	if (flag == 2)
+	{
+		Rm_z = transformation;
+	}
+	Rm = Rm_z*Rm_y*Rm_x;
 
 }
 

@@ -16,10 +16,10 @@ public:
 	void PrintFaces() const;
 	void PrintVertices()const;
 	void Set_Tw_mat(glm::mat4x4& transformation);
-	void Set_Rw_mat(glm::mat4x4& transformation);
+	void Set_Rw_mat(glm::mat4x4& transformation, int flag);
 	void Set_Sw_mat(glm::mat4x4& transformation);
 	void Set_Tm_mat(glm::mat4x4& transformation);
-	void Set_Rm_mat(glm::mat4x4& transformation);
+	void Set_Rm_mat(glm::mat4x4& transformation, int flag);
 	void Set_Sm_mat(glm::mat4x4& transformation);
 	void Set_transmatrix();
 	const glm::mat4x4 Get_transmatrix() const;
@@ -35,8 +35,15 @@ private:
 	glm::mat4x4 Tm = glm::mat4(1.0f);
 	glm::mat4x4 Tw = glm::mat4(1.0f);
 	glm::mat4x4 Rw = glm::mat4(1.0f);
+	glm::mat4x4 Rw_x = glm::mat4(1.0f);
+	glm::mat4x4 Rw_y = glm::mat4(1.0f);
+	glm::mat4x4 Rw_z = glm::mat4(1.0f);
+
 	glm::mat4x4 Sw = glm::mat4(1.0f);
 	glm::mat4x4 Rm = glm::mat4(1.0f);
+	glm::mat4x4 Rm_x = glm::mat4(1.0f);
+	glm::mat4x4 Rm_y = glm::mat4(1.0f);
+	glm::mat4x4 Rm_z = glm::mat4(1.0f);
 	glm::mat4x4 Sm = glm::mat4(1.0f);
 	glm::mat4x4 transmatrix= glm::mat4(1.0f);
 

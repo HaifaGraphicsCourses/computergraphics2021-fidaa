@@ -298,7 +298,7 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 void Renderer::Render(const Scene& scene)
 {
 	
-	const glm::ivec3 c1(1, 0, 1);
+	const glm::ivec3 c1(0, 0,1);
 	int index0, index1, index2;
 	glm::vec3 v0, v1, v2;
 	glm::vec4 h0, h1, h2;

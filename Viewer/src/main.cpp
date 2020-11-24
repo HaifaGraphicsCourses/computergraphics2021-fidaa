@@ -263,26 +263,44 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	{
 		
 		const char* listbox_items[] = {"local transformation","world transformation"};
+		const char* listbox_rotations[] = { "rotate around x","rotate around y","rotate around z" };
 		static int listbox_item_current = 0;
+		static int current_rotation = 0;
 		int scale = 0, trans = 0, rotate = 0;
 		ImGui::Begin("transformation");
 	    ImGui::ListBox("select\n", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items),2);
 		
 
 		static float anglem = 0.0f;
+		static float ax_m = 0.0f;
+		static float lastax_m = 0.0f;
+		static float ay_m = 0.0f;
+		static float lastay_m = 0.0f;
+		
+		static float az_m = 0.0f;
+		static float lastaz_m = 0.0f;
+
+
 		static float anglew = 0.0f;
+		static float ax_w = 0.0f;
+		static float lastax_w = 0.0f;
+		static float ay_w = 0.0f;
+		static float lastay_w = 0.0f;
+
+		static float az_w = 0.0f;
+		static float lastaz_w = 0.0f;
 		
 		
-		static float Tm_vec[3] = { 0.0f, 0.0f, 0.0f };
-		static float Tw_vec[3] = { 0.0f, 0.0f, 0.0f };
-		static float Sm_vec[3] = { 1.0f, 1.0f, 1.0f };
-		static float Sw_vec[3] = { 1.0f, 1.0f, 1.0f };
+		static float Tm_vec[3] = { 0.0f, 0.0f, 0.0f }; //translate vector to the modle, the vector contains x,y,z steps
+		static float Tw_vec[3] = { 0.0f, 0.0f, 0.0f }; //translate vector to the world, the vector contains x,y,z steps
+		static float Sm_vec[3] = { 1.0f, 1.0f, 1.0f }; //scale vector to the modle, the vector contains x,y,z steps
+		static float Sw_vec[3] = { 1.0f, 1.0f, 1.0f };//scale vector to the world, the vector contains x,y,z steps
 		
 	
 
 
 		
-		if (listbox_item_current == 0) //local(modle)
+		if (listbox_item_current == 0) // local(modle)
 		{
 			
 			ImGui::Checkbox("translation", &Tm);
@@ -300,19 +318,48 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::Checkbox("Rotation", &Rm);
 			if (Rm)
 			{
-				ImGui::Checkbox("Rotate around x", &rtxm);
-				ImGui::Checkbox("Rotate around y", &rtym);
-				ImGui::Checkbox("Rotate around z", &rtzm);
-				ImGui::SliderAngle("slider angle", &anglem, -360, 360);
-				if (rtxm || (rtym || rtzm))
-				{
-					scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglem, glm::vec3(rtxm, rtym, rtzm)));
-				}
-				else
-				{
-					scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglem, glm::vec3(1,1,1)));
-				}
+				ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "select any rotation:\n");
+				ImGui::ListBox("", &current_rotation, listbox_rotations, IM_ARRAYSIZE(listbox_rotations), 3);
+
+				ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "set the angle:\n");
 				
+				if (current_rotation==0) //around x
+				{
+					ImGui::SliderAngle("slider angle", &ax_m, -360, 360);
+					
+					if (lastax_m != ax_m)
+					{
+						lastax_m = ax_m;
+						scene.GetActiveModel().Set_Rm_mat(glm::rotate(ax_m, glm::vec3(1, 0, 0)),0);
+						scene.GetActiveModel().Set_transmatrix();
+					}
+
+					
+					
+				}
+				if (current_rotation == 1)// around y
+				{
+					ImGui::SliderAngle("slider angle", &ay_m, -360, 360);
+					if (lastay_m != ay_m)
+					{
+						lastay_m = ay_m;
+						scene.GetActiveModel().Set_Rm_mat(glm::rotate(ay_m, glm::vec3(0, 1, 0)),1);
+						scene.GetActiveModel().Set_transmatrix();
+					}
+				}
+				if (current_rotation == 2) // around z
+				{
+					ImGui::SliderAngle("slider angle", &az_m, -360, 360);
+
+					if (lastaz_m != az_m)
+					{
+						lastaz_m = az_m;
+						scene.GetActiveModel().Set_Rm_mat(glm::rotate(az_m, glm::vec3(0, 0, 1)), 2);
+						scene.GetActiveModel().Set_transmatrix();
+					}
+				
+				
+				}
 
 			}
 			ImGui::Checkbox("scale", &Sm);
@@ -352,20 +399,48 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			if (Rw)
 			{
 
-				ImGui::Checkbox("Rotate around x", &rtxw);
-				ImGui::Checkbox("Rotate around y", &rtyw);
-				ImGui::Checkbox("Rotate around z", &rtzw);
-				//model.Set_Rw_mat(XY[0], XY[1], XY[2], angle);
-				ImGui::SliderAngle("slider angle", &anglew, -360, 360);
-				if (rtxw || (rtyw || rtzw))
+				ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "select any rotation:\n");
+				ImGui::ListBox("", &current_rotation, listbox_rotations, IM_ARRAYSIZE(listbox_rotations), 3);
+
+				ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "set the angle:\n");
+
+				if (current_rotation == 0)
 				{
-					scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglew, glm::vec3(rtxw, rtyw, rtzw)));
+					ImGui::SliderAngle("slider angle", &ax_w, -360, 360);
+
+					if (lastax_w != ax_w)
+					{
+						lastax_w = ax_w;
+						scene.GetActiveModel().Set_Rm_mat(glm::rotate(ax_w, glm::vec3(1, 0, 0)), 0);
+						scene.GetActiveModel().Set_transmatrix();
+					}
+
+
+
 				}
-				else
+				if (current_rotation == 1)
 				{
-					scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglew, glm::vec3(1, 1, 1)));
+					ImGui::SliderAngle("slider angle", &ay_w, -360, 360);
+					if (lastay_w != ay_w)
+					{
+						lastay_w = ay_w;
+						scene.GetActiveModel().Set_Rm_mat(glm::rotate(ay_w, glm::vec3(0, 1, 0)), 1);
+						scene.GetActiveModel().Set_transmatrix();
+					}
 				}
-				//scene.GetActiveModel().Set_Rm_mat(glm::rotate(anglew, glm::vec3(rtxw, rtyw, rtzw)));
+				if (current_rotation == 2)
+				{
+					ImGui::SliderAngle("slider angle", &az_w, -360, 360);
+
+					if (lastaz_w != az_w)
+					{
+						lastaz_w = az_w;
+						scene.GetActiveModel().Set_Rm_mat(glm::rotate(az_w, glm::vec3(0, 0, 1)), 2);
+						scene.GetActiveModel().Set_transmatrix();
+					}
+
+
+				}
 
 			}
 			
@@ -387,11 +462,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		}
 		scene.GetActiveModel().Set_transmatrix();
-		/*if (print)
-		{
-			auto model = scene.GetActiveModel();
-			model.printmat();
-		}*/
+		
 
 
 
