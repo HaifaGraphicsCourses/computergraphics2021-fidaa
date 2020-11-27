@@ -28,6 +28,7 @@ bool Tw = false, Sw = false, Rw = false;
 bool rtxm = false,rtym = false, rtzm = false;
 bool rtxw = false,rtyw = false, rtzw = false;
 
+
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 
 /**
@@ -266,7 +267,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		const char* listbox_rotations[] = { "rotate around x","rotate around y","rotate around z" };
 		static int listbox_item_current = 0;
 		static int current_rotation = 0;
+		static int Counterbox = 0;
 		int scale = 0, trans = 0, rotate = 0;
+		
 		ImGui::Begin("transformation");
 	    ImGui::ListBox("select\n", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items),2);
 		
@@ -462,10 +465,69 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		}
 		scene.GetActiveModel().Set_transmatrix();
+		scene.GetActiveModel().Set_Reset(0);
+		int reset = ImGui::Button("Reset");
+		if (reset)
+		{
+			scene.GetActiveModel().Set_Reset(1);
+			Tm = 0;
+			Rm = 0;
+			Sm = 0;
+			Tw = 0;
+			Rw = 0;
+			Sw = 0;
+			ax_m = 0;
+			ay_m = 0;
+			az_m = 0;
+			ax_w = 0;
+			ay_w = 0;
+			az_w = 0;
+			lastax_m = 0;
+			lastay_m = 0;
+			lastaz_m = 0;
+			lastax_w = 0;
+			lastay_w = 0;
+			lastaz_w = 0;
+			Tm_vec[0] = 0; 
+			Tm_vec[1] = 0; 
+			Tm_vec[2] = 0; 
+
+			Tw_vec[0] = 0;
+			Tw_vec[1] = 0;
+			Tw_vec[2] = 0;
+
+			Sw_vec[0] = 1;
+			Sw_vec[1] = 1;
+			Sw_vec[2] = 1;
+
+			Sm_vec[0] = 1;
+			Sm_vec[1] = 1;
+			Sm_vec[2] = 1;
+
+		   
+			
+		}
+		
+
+		
+
+		if (ImGui::Button("Show bounding box"))
+		{
+			Counterbox++;
+		}
+			if ((Counterbox % 2) == 0)
+			{
+				scene.GetActiveModel().Set_showbox(0);
+			}
+			else
+			{
+				scene.GetActiveModel().Set_showbox(1);
+			}
+			
 		
 
 
-
+		
 		ImGui::End();
 
 	}

@@ -301,44 +301,80 @@ void Renderer::Render(const Scene& scene)
 	const glm::ivec3 c1(0, 0,1);
 	int index0, index1, index2;
 	glm::vec3 v0, v1, v2;
-	glm::vec4 h0, h1, h2;
+	//glm::vec4 h0, h1, h2;
 	glm::vec4 V0new, V1new, V2new;
+	glm::vec4 UpL1, UpL2, UpR1, UpR2, DnL1, DnL2, DnR1, DnR2;
+	float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0;
 	glm::mat4x4 Stmat,transmat;
 	if (scene.GetModelCount())
 	{
 		auto model = scene.GetActiveModel();
 		Stmat = model.GetSTmat();
 		
-		
-		
-		for (int i = 0; i < scene.GetActiveModel().GetFacesCount(); i++)   // #2
-		{
-			index0 = scene.GetActiveModel().GetFace(i).GetVertexIndex(0);
-			index1 = scene.GetActiveModel().GetFace(i).GetVertexIndex(1);
-			index2 = scene.GetActiveModel().GetFace(i).GetVertexIndex(2);
-			v0 = scene.GetActiveModel().GetVertex(index0);
-			v1 = scene.GetActiveModel().GetVertex(index1);
-			v2 = scene.GetActiveModel().GetVertex(index2);
-			//h0 = Stmat *glm::vec4(v0, 1);
-			//h1 = Stmat *glm::vec4(v1, 1);
-			//h2 = Stmat *glm::vec4(v2, 1);
-			transmat = scene.GetActiveModel().Get_transmatrix() * Stmat;
-			V0new = transmat * glm::vec4(v0, 1);
-			//std::cout << V0new.x << "\n";
-			V1new = transmat * glm::vec4(v1, 1);
-			V2new = transmat * glm::vec4(v2, 1);
-			//DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h1.x / h1.w, h1.y / h1.w),c1);
-			//DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
-			//DrawLine(glm::ivec2(h1.x / h1.w, h1.y / h1.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
-			DrawLine(glm::ivec2(V0new.x / V0new.w, V0new.y / V0new.w), glm::ivec2(V1new.x / V1new.w, V1new.y / V1new.w),c1);
-			DrawLine(glm::ivec2(V0new.x / V0new.w, V0new.y / V0new.w), glm::ivec2(V2new.x / V2new.w, V2new.y / V2new.w),c1);
-			DrawLine(glm::ivec2(V1new.x / V1new.w, V1new.y / V1new.w), glm::ivec2(V2new.x / V2new.w, V2new.y / V2new.w),c1);
-			//model.printmat();
+			for (int i = 0; i < scene.GetActiveModel().GetFacesCount(); i++)   // #2
+			{
+				index0 = scene.GetActiveModel().GetFace(i).GetVertexIndex(0);
+				index1 = scene.GetActiveModel().GetFace(i).GetVertexIndex(1);
+				index2 = scene.GetActiveModel().GetFace(i).GetVertexIndex(2);
+				v0 = scene.GetActiveModel().GetVertex(index0);
+				v1 = scene.GetActiveModel().GetVertex(index1);
+				v2 = scene.GetActiveModel().GetVertex(index2);
+				//h0 = Stmat *glm::vec4(v0, 1);
+				//h1 = Stmat *glm::vec4(v1, 1);
+				//h2 = Stmat *glm::vec4(v2, 1);
+				transmat = scene.GetActiveModel().Get_transmatrix() * Stmat;
+				
+				V0new = transmat * glm::vec4(v0, 1);
+				V1new = transmat * glm::vec4(v1, 1);
+				V2new = transmat * glm::vec4(v2, 1);
+				//DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h1.x / h1.w, h1.y / h1.w),c1);
+				//DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
+				//DrawLine(glm::ivec2(h1.x / h1.w, h1.y / h1.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
+				DrawLine(glm::ivec2(V0new.x / V0new.w, V0new.y / V0new.w), glm::ivec2(V1new.x / V1new.w, V1new.y / V1new.w), c1);
+				DrawLine(glm::ivec2(V0new.x / V0new.w, V0new.y / V0new.w), glm::ivec2(V2new.x / V2new.w, V2new.y / V2new.w), c1);
+				DrawLine(glm::ivec2(V1new.x / V1new.w, V1new.y / V1new.w), glm::ivec2(V2new.x / V2new.w, V2new.y / V2new.w), c1);
+				//model.printmat();
+
+			}
+			if (scene.GetActiveModel().Get_showbox())
+			{
+				maxX = scene.GetActiveModel().Get_maxX();
+				maxY = scene.GetActiveModel().Get_maxY();
+				maxZ = scene.GetActiveModel().Get_maxZ();
+				minX = scene.GetActiveModel().Get_minX();
+				minY = scene.GetActiveModel().Get_minY();
+				minZ = scene.GetActiveModel().Get_minZ();
+
+
+				UpR1 = transmat * glm::vec4(maxX, maxY, maxZ, 1);
+				UpR2 = transmat * glm::vec4(maxX, maxY, minZ, 1);
+				UpL1 = transmat * glm::vec4(minX, maxY, maxZ, 1);
+				UpL2 = transmat * glm::vec4(minX, maxY, minZ, 1);
+
+				DnR1 = transmat * glm::vec4(maxX, minY, maxZ, 1);
+				DnR2 = transmat * glm::vec4(maxX, minY, minZ, 1);
+				DnL1 = transmat * glm::vec4(minX, minY, maxZ, 1);
+				DnL2 = transmat * glm::vec4(minX, minY, minZ, 1);
+				//R1
+				DrawLine(glm::ivec2(UpR1.x / UpR1.w, UpR1.y / UpR1.w), glm::ivec2(UpR2.x / UpR2.w, UpR2.y / UpR2.w), c1);
+				DrawLine(glm::ivec2(UpR1.x / UpR1.w, UpR1.y / UpR1.w), glm::ivec2(UpL1.x / UpL1.w, UpL1.y / UpL1.w), c1);
+				DrawLine(glm::ivec2(UpR1.x / UpR1.w, UpR1.y / UpR1.w), glm::ivec2(DnR1.x / DnR1.w, DnR1.y / DnR1.w), c1);
+
+				DrawLine(glm::ivec2(UpL2.x / UpL2.w, UpL2.y / UpL2.w), glm::ivec2(UpR2.x / UpR2.w, UpR2.y / UpR2.w), c1);
+				DrawLine(glm::ivec2(UpL2.x / UpL2.w, UpL2.y / UpL2.w), glm::ivec2(UpL1.x / UpL1.w, UpL1.y / UpL1.w), c1);
+				DrawLine(glm::ivec2(UpL2.x / UpL2.w, UpL2.y / UpL2.w), glm::ivec2(DnL2.x / DnL2.w, DnL2.y / DnL2.w), c1);
+
+				DrawLine(glm::ivec2(DnL1.x / DnL1.w, DnL1.y / DnL1.w), glm::ivec2(DnR1.x / DnR1.w, DnR1.y / DnR1.w), c1);
+				DrawLine(glm::ivec2(DnL1.x / DnL1.w, DnL1.y / DnL1.w), glm::ivec2(UpL1.x / UpL1.w, UpL1.y / UpL1.w), c1);
+				DrawLine(glm::ivec2(DnL1.x / DnL1.w, DnL1.y / DnL1.w), glm::ivec2(DnL2.x / DnL2.w, DnL2.y / DnL2.w), c1);
+
+
+				DrawLine(glm::ivec2(DnR2.x / DnR2.w, DnR2.y / DnR2.w), glm::ivec2(DnR1.x / DnR1.w, DnR1.y / DnR1.w), c1);
+				DrawLine(glm::ivec2(DnR2.x / DnR2.w, DnR2.y / DnR2.w), glm::ivec2(UpR2.x / UpR2.w, UpR2.y / UpR2.w), c1);
+				DrawLine(glm::ivec2(DnR2.x / DnR2.w, DnR2.y / DnR2.w), glm::ivec2(DnL2.x / DnL2.w, DnL2.y / DnL2.w), c1);
+			}
 			
-		}
-		
-		
-		// #1 
+			// #1 
 		/*
 		model.PrintFaces();
 

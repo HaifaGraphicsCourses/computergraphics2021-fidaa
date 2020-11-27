@@ -4,11 +4,18 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4 T) :
+MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4 T, float MAX, float maxX, float maxY, float maxZ, float minX, float minY, float minZ) :
 	faces_(faces),
 	vertices_(vertices),
 	normals_(normals),
-	STmat(T)
+	STmat(T),
+	MAX(MAX),
+	maxX(maxX),
+	maxY(maxY),
+	maxZ(maxZ),
+	minX(minX),
+	minY(minY),
+	minZ(minZ)
 {
 
 }
@@ -152,4 +159,63 @@ void MeshModel::printmat() const
 		std::cout << "\n";
 	}
 
+}
+
+void MeshModel::Set_Reset(int r)
+{
+	reset = r;
+	if (reset)
+	{
+		transmatrix = glm::mat4(1.0f);
+		Sw = glm::mat4(1.0f);
+		Sm = glm::mat4(1.0f);
+		Rw = glm::mat4(1.0f);
+		Rm = glm::mat4(1.0f);
+		Tw = glm::mat4(1.0f);
+		Tm = glm::mat4(1.0f);
+	}
+	
+}
+
+float MeshModel::Get_maxX() const
+{
+	return maxX;
+}
+
+
+float MeshModel::Get_maxY() const
+{
+	return maxY;
+}
+
+
+float MeshModel::Get_maxZ() const
+{
+	return maxZ;
+}
+
+float MeshModel::Get_minX() const
+{
+	return minX;
+}
+
+
+float MeshModel::Get_minY() const
+{
+	return minY;
+}
+
+float MeshModel::Get_minZ() const
+{
+	return minZ;
+}
+
+void MeshModel::Set_showbox(int b)
+{
+	showbox = b;
+}
+
+int MeshModel::Get_showbox()const
+{
+	return showbox;
 }
