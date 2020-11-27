@@ -5,7 +5,9 @@
 #include "Renderer.h"
 #include "InitShader.h"
 #include <iostream>
-
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
@@ -373,7 +375,49 @@ void Renderer::Render(const Scene& scene)
 				DrawLine(glm::ivec2(DnR2.x / DnR2.w, DnR2.y / DnR2.w), glm::ivec2(UpR2.x / UpR2.w, UpR2.y / UpR2.w), c1);
 				DrawLine(glm::ivec2(DnR2.x / DnR2.w, DnR2.y / DnR2.w), glm::ivec2(DnL2.x / DnL2.w, DnL2.y / DnL2.w), c1);
 			}
-			
+			//auto model = scene.GetActiveModel();
+			if (model.Get_facenormals())
+			{
+				for (int i = 0; i < model.GetFacesCount(); ++i)
+				{
+					
+					int Ver1 = model.GetFace(i).GetVertexIndex(0);
+					int Ver2 = model.GetFace(i).GetVertexIndex(1);
+					int Ver3 = model.GetFace(i).GetVertexIndex(2);
+					glm::vec3 v1tp = model.GetVertex(Ver1);
+					glm::vec3 v2tp = model.GetVertex(Ver2);
+					glm::vec3 v3tp = model.GetVertex(Ver3);
+					glm::vec3 faceNormal = normalize(cross(glm::vec3(v1tp - v2tp), glm::vec3(v1tp - v3tp)));
+					glm::vec4 v1 = transmat * glm::vec4(model.GetVertex(Ver1), 1);
+					glm::vec4 v2 = transmat * glm::vec4(model.GetVertex(Ver2), 1);
+					glm::vec4 v3 = transmat * glm::vec4(model.GetVertex(Ver3), 1);
+					glm::vec3 Center = (v1 + v2 + v3) / 3.0f;
+					glm::vec4 normalvec = glm::scale(glm::vec3(50,50,50)) * model.Get_Rw_mat() * model.Get_Rm_mat() * glm::vec4(faceNormal, 1) + glm::vec4(Center, 0);
+					DrawLine(glm::ivec2(Center.x, Center.y), glm::ivec2(normalvec.x, normalvec.y), c1);
+				}
+			}
+			if (model.Get_vernormals())
+			{
+				for (int i = 0; i < model.GetFacesCount(); i++)
+				{
+					//Face face = model.GetFace(i);
+					int Ver1 = model.GetFace(i).GetVertexIndex(0);
+					int Ver2 = model.GetFace(i).GetVertexIndex(1);
+					int Ver3 = model.GetFace(i).GetVertexIndex(2);
+					int Normali1 = model.GetFace(i).GetNormalIndex(0);
+					int Normali2 = model.GetFace(i).GetNormalIndex(1);
+					int Normali3 = model.GetFace(i).GetNormalIndex(2);
+					glm::vec4 v1 = transmat * glm::vec4(model.GetVertex(Ver1), 1);
+					glm::vec4 v2 = transmat * glm::vec4(model.GetVertex(Ver2), 1);
+					glm::vec4 v3 = transmat * glm::vec4(model.GetVertex(Ver3), 1);
+					glm::vec4 nv1 = glm::scale(glm::vec3(50, 50, 50)) * model.Get_Rw_mat() * model.Get_Rm_mat() * glm::vec4(model.Get_normalvertex(Normali1), 1);
+					glm::vec4 nv2 = glm::scale(glm::vec3(50, 50, 50)) * model.Get_Rw_mat() * model.Get_Rm_mat() * glm::vec4(model.Get_normalvertex(Normali2), 1);
+					glm::vec4 nv3 = glm::scale(glm::vec3(50, 50, 50)) * model.Get_Rw_mat() * model.Get_Rm_mat() * glm::vec4(model.Get_normalvertex(Normali3), 1);
+					DrawLine(glm::ivec2(v1.x, v1.y), glm::ivec2(nv1.x + v1.x, nv1.y + v1.y), c1);
+					DrawLine(glm::ivec2(v2.x, v2.y), glm::ivec2(nv2.x + v2.x, nv2.y + v2.y), c1);
+					DrawLine(glm::ivec2(v3.x, v3.y), glm::ivec2(nv3.x + v3.x, nv3.y + v3.y), c1);
+				}
+			}
 			// #1 
 		/*
 		model.PrintFaces();

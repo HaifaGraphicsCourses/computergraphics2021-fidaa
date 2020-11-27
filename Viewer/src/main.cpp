@@ -25,6 +25,8 @@ bool show_demo_window = false;
 bool show_another_window = false;
 bool Tm = false, Sm = false, Rm = false;
 bool Tw = false, Sw = false, Rw = false;
+bool facecheck = false;
+bool vertexcheck = false;
 bool rtxm = false,rtym = false, rtzm = false;
 bool rtxw = false,rtyw = false, rtzw = false;
 
@@ -267,7 +269,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		const char* listbox_rotations[] = { "rotate around x","rotate around y","rotate around z" };
 		static int listbox_item_current = 0;
 		static int current_rotation = 0;
-		static int Counterbox = 0;
+		static int Counterbox = 0, facenormals_counter = 0, vernormals_counter = 0;
+
 		int scale = 0, trans = 0, rotate = 0;
 		
 		ImGui::Begin("transformation");
@@ -515,17 +518,44 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		{
 			Counterbox++;
 		}
-			if ((Counterbox % 2) == 0)
+		if ((Counterbox % 2) == 0)
+		{
+			scene.GetActiveModel().Set_showbox(0);
+		}
+		else
+		{
+			scene.GetActiveModel().Set_showbox(1);
+		}
+			
+		
+			
+			if (ImGui::Checkbox("show face normals",&facecheck))
 			{
-				scene.GetActiveModel().Set_showbox(0);
+				facenormals_counter++;
+				if ((facenormals_counter % 2) == 0)
+				{
+					scene.GetActiveModel().Set_facenormals(0);
+				}
+				else
+				{
+					scene.GetActiveModel().Set_facenormals(1);
+				}
 			}
-			else
+			
+			if (ImGui::Checkbox("Show vertices normals", &vertexcheck))
 			{
-				scene.GetActiveModel().Set_showbox(1);
+				vernormals_counter++;
+				if ((vernormals_counter % 2) == 0)
+				{
+					scene.GetActiveModel().Set_vernormals(0);
+				}
+				else
+				{
+					scene.GetActiveModel().Set_vernormals(1);
+				}
 			}
 			
 		
-
 
 		
 		ImGui::End();

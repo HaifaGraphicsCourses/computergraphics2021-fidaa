@@ -17,12 +17,15 @@ public:
 	void PrintVertices()const;
 	void Set_Tw_mat(glm::mat4x4& transformation);
 	void Set_Rw_mat(glm::mat4x4& transformation, int flag);
+	glm::mat4x4 Get_Rw_mat() const;
 	void Set_Sw_mat(glm::mat4x4& transformation);
 	void Set_Tm_mat(glm::mat4x4& transformation);
 	void Set_Rm_mat(glm::mat4x4& transformation, int flag);
+	glm::mat4x4 Get_Rm_mat() const;
 	void Set_Sm_mat(glm::mat4x4& transformation);
 	void Set_transmatrix();
 	const glm::mat4x4 Get_transmatrix() const;
+	
 	void printmat() const;
 	void Set_Reset(int r);
 
@@ -35,7 +38,11 @@ public:
 	float Get_minY() const;
 	float Get_minZ() const;
 	
-
+	void Set_facenormals(int fn);
+	void Set_vernormals(int vn);
+	int Get_facenormals()const;
+	int Get_vernormals()const;
+	const glm::vec3 Get_normalvertex(int index) const;
 
 
 private:
@@ -62,5 +69,6 @@ private:
 	float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0, MAX = 0;
 	int reset = 0;
 	int showbox = 0;
-
+	int facenormals = 0;
+	int vernormals = 0;
 };

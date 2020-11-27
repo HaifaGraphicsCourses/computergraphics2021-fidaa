@@ -219,3 +219,37 @@ int MeshModel::Get_showbox()const
 {
 	return showbox;
 }
+
+void MeshModel::Set_facenormals(int fn)
+{
+	facenormals = fn;
+}
+
+int MeshModel::Get_facenormals()const
+{
+	return facenormals;
+}
+
+void MeshModel::Set_vernormals(int vn)
+{
+	vernormals = vn;
+}
+
+int MeshModel::Get_vernormals()const
+{
+	return vernormals;
+}
+
+glm::mat4x4 MeshModel::Get_Rw_mat() const
+{
+	return Rw;
+}
+
+glm::mat4x4 MeshModel::Get_Rm_mat() const
+{
+	return Rm;
+}
+const glm::vec3 MeshModel::Get_normalvertex(int index) const
+{
+	return normals_[index - 1];
+}
