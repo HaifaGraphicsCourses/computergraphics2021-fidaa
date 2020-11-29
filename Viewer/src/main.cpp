@@ -587,8 +587,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		static float camera_Tm_vec[3] = { 0.0f, 0.0f, 0.0f };
 		static float camera_Tw_vec[3] = { 0.0f, 0.0f, 0.0f };
-		static float ortho_val = 0.5f;
-		static float fovy_m = 45.0f;
+		static float ortho_val = scene.GetActiveModel().Get_orthoGraphicVal();
+		static float fovy_m = 45;
 
 		static float camera_anglem = 0.0f;
 		static float camera_ax_m = 0.0f;
@@ -605,17 +605,58 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float camera_lastay_w = 0.0f;
 		static float camera_az_w = 0.0f;
 		static float camera_lastaz_w = 0.0f;
-
+		
 		ImGui::Begin("Camera transformation");
 		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Projection\n");
 		ImGui::ListBox("select one projection", &camera_current_proj, Camera_listbox_proj, IM_ARRAYSIZE(Camera_listbox_proj), 2);
 
-		//scene.GetActiveCamera().Set_OrthoGraphic(orthographic, 0);
-		//ImGui::Checkbox("orthographic", &orthographic);
-		//ImGui::Checkbox("orthographic", &orthographic);
 		if (camera_current_proj==0)
 		{
-			ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);            // Edit 1 float using a slider from 0.0f to 1.0f
+			if (scene.GetActiveModel().GetModelName() == "banana.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "beethoven.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f,100.0f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "bishop.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "bunny.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "camera.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "chain.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "cow.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "demo.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "dolphin.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 300.0f, 2000.0f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "pawn.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
+			}
+			if (scene.GetActiveModel().GetModelName() == "teapot.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
+			}
+			            
 
 			scene.GetActiveCamera().Set_OrthoGraphic(1, ortho_val); 
 		}
@@ -756,29 +797,57 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			}
 		}
 
-		//ImGui::End();
+		
 
 		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Look at:\n");
 		
-			static float eye_vec[3] = { 0.0f, 0.0f, 0.5f };
+			static float eye_vec[3] = { 0.0f, 0.0f, scene.GetActiveModel().Get_Zeye() };
 			static float at_vec[3] = { 0.0f, 0.0f, 0.0f };
 			static float up_vec[3] = { 0.0f, 1.0f, 0.0f };
-
-			
+			//if (scene.GetActiveModel().GetModelName() == "beethoven.obj")
+			//{
+				//eye_vec[2] = 30.0f;
+				//static  eye_vec[2] = 30.0f;
+			//}
+			/*
+			if (scene.GetActiveModel().GetModelName() == "bunny.obj")
+			{
+				eye_vec[2] = 3.0f;
+			}
+			if (scene.GetActiveModel().GetModelName() == "camera.obj")
+			{
+				eye_vec[2] = 10.0f;
+			}
+			if (scene.GetActiveModel().GetModelName() == "chain.obj")
+			{
+				eye_vec[2] = 10.0f;
+			}
+			if (scene.GetActiveModel().GetModelName() == "cow.obj")
+			{
+				eye_vec[2] = 20.0f;
+			}
+			if (scene.GetActiveModel().GetModelName() == "demo.obj")
+			{
+				eye_vec[2] = 10.0f;
+			}
+			if (scene.GetActiveModel().GetModelName() == "dolphin.obj")
+			{
+				eye_vec[2] = 50.0f;
+			}*/
 			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Eye\n");
 
 			ImGui::InputFloat("X eye", &eye_vec[0]);
 			ImGui::InputFloat("Y eye", &eye_vec[1]);
 			ImGui::InputFloat("Z eye", &eye_vec[2]);
 			scene.GetActiveCamera().Set_Eye(eye_vec[0], eye_vec[1], eye_vec[2]);
-			scene.GetActiveCamera().Set_Lookat();
+			scene.GetActiveCamera().SetCameraLookAt();
 			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "At\n");
 
 			ImGui::InputFloat("X at", &at_vec[0]);
 			ImGui::InputFloat("Y at", &at_vec[1]);
 			ImGui::InputFloat("Z at", &at_vec[2]);
 			scene.GetActiveCamera().Set_At(at_vec[0], at_vec[1], at_vec[2]);
-			scene.GetActiveCamera().Set_Lookat();
+			scene.GetActiveCamera().SetCameraLookAt();
 
 			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Up\n");
 
@@ -786,7 +855,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::InputFloat("Y up", &up_vec[1]);
 			ImGui::InputFloat("Z up", &up_vec[2]);
 			scene.GetActiveCamera().Set_Up(up_vec[0], up_vec[1], up_vec[2]);
-			scene.GetActiveCamera().Set_Lookat();
+			scene.GetActiveCamera().SetCameraLookAt();
 
 
 			

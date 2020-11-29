@@ -115,11 +115,11 @@ void Camera::Set_Up(float x, float y, float z)
 {
 	up_vec = { x,y,z };
 }
-
-void Camera::Set_Lookat()
+void Camera::SetCameraLookAt()
 {
 	lookat = glm::lookAt(eye_vec, at_vec, up_vec);
 }
+
 
 
 const glm::mat4x4 Camera::Get_Lookat()const

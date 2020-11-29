@@ -7,7 +7,7 @@ public:
 	Camera();
 	virtual ~Camera();
 
-	void SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up);
+	void SetCameraLookAt();
 
 	const glm::mat4x4& GetProjectionTransformation() const;
 	const glm::mat4x4& GetViewTransformation() const;
@@ -20,7 +20,7 @@ public:
 	void Set_Eye(float x,float y,float z);
 	void Set_At(float x, float y, float z);
 	void Set_Up(float x, float y, float z);
-	void Set_Lookat();
+	
 	const glm::mat4x4 Get_Lookat()const;
 	const glm::mat4x4 Get_Invtransmatrix()const ;
 	void Set_OrthoGraphic(int OG, float ortho_val);

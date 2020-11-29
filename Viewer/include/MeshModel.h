@@ -43,7 +43,8 @@ public:
 	int Get_facenormals()const;
 	int Get_vernormals()const;
 	const glm::vec3 Get_normalvertex(int index) const;
-
+	float Get_orthoGraphicVal();
+	float MeshModel::Get_Zeye();
 
 private:
 	std::vector<Face> faces_;

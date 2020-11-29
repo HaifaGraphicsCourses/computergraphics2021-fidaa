@@ -305,17 +305,17 @@ void Renderer::Render(const Scene& scene)
 	const glm::ivec3 c1(0, 0,1);
 	int index0, index1, index2;
 	glm::vec3 v0, v1, v2;
-	//glm::vec4 h0, h1, h2;
+
 	glm::vec4 V0new, V1new, V2new;
 	glm::vec4 UpL1, UpL2, UpR1, UpR2, DnL1, DnL2, DnR1, DnR2;
 	float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0;
-	glm::mat4x4 inverse, transmat, ortho, st_view, lookat;
+	glm::mat4x4 inverse, transmat, projection, st_view, lookat;
 	if (scene.GetModelCount())
 	{
 		auto model = scene.GetActiveModel();
 		
 		inverse = scene.GetActiveCamera().Get_Invtransmatrix();
-		ortho = scene.GetActiveCamera().GetProjectionTransformation();
+		projection = scene.GetActiveCamera().GetProjectionTransformation();
 		lookat = scene.GetActiveCamera().Get_Lookat();
 		st_view = glm::scale(glm::vec3(half_width , half_height, 1)) * glm::translate(glm::vec3(1, 1, 0));
 			for (int i = 0; i < scene.GetActiveModel().GetFacesCount(); i++)   // #2
@@ -329,9 +329,9 @@ void Renderer::Render(const Scene& scene)
 			
 				transmat = scene.GetActiveModel().Get_transmatrix() ;
 				
-				V0new =  ortho * lookat * inverse* transmat * glm::vec4(v0, 1);
-				V1new = ortho * lookat * inverse* transmat* glm::vec4(v1, 1);
-				V2new = ortho * lookat * inverse*transmat * glm::vec4(v2, 1);
+				V0new = projection * lookat * inverse* transmat * glm::vec4(v0, 1);
+				V1new = projection * lookat * inverse* transmat* glm::vec4(v1, 1);
+				V2new = projection * lookat * inverse*transmat * glm::vec4(v2, 1);
 				if (!(scene.GetActiveCamera().Get_OrthoGraphic()))
 				{
 					V0new /= V0new.w;

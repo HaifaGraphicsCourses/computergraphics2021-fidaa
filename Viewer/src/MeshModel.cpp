@@ -8,6 +8,7 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	faces_(faces),
 	vertices_(vertices),
 	normals_(normals),
+	model_name_(model_name),
 	STmat(T),
 	MAX(MAX),
 	maxX(maxX),
@@ -252,4 +253,106 @@ glm::mat4x4 MeshModel::Get_Rm_mat() const
 const glm::vec3 MeshModel::Get_normalvertex(int index) const
 {
 	return normals_[index - 1];
+}
+
+float MeshModel::Get_orthoGraphicVal()
+{
+	float ortho_val=0;
+	if (model_name_ == "banana.obj")
+	{
+		ortho_val = 0.5f;
+	}
+	if (model_name_ == "beethoven.obj")
+	{
+		ortho_val = 25.0f;
+	}
+	if (model_name_ == "bishop.obj")
+	{
+		ortho_val = 0.5f;
+	}
+	if (model_name_ == "bunny.obj")
+	{
+		ortho_val = 5.0f;
+	}
+	if (model_name_ == "camera.obj")
+	{
+		ortho_val = 10.0f;
+	}
+	if (model_name_ == "chain.obj")
+	{
+		ortho_val = 15.0f;
+	}
+	if (model_name_ == "cow.obj")
+	{
+		ortho_val = 20.0f;
+	}
+	if (model_name_ == "demo.obj")
+	{
+		ortho_val = 20.0f;
+	}
+	if (model_name_ == "dolphin.obj")
+	{
+		ortho_val = 800.0f;
+	}
+	if (model_name_ == "pawn.obj")
+	{
+		ortho_val = 0.3f;
+	}
+	if (model_name_ == "teapot.obj")
+	{
+		ortho_val = 15.0f;
+	}
+	return ortho_val;
+}
+
+
+
+float MeshModel::Get_Zeye()
+{
+	float eye_z = 0;
+	if (model_name_ == "banana.obj")
+	{
+		eye_z = 0.5f;
+	}
+	if (model_name_ == "beethoven.obj")
+	{
+		eye_z = 30.0f;
+	}
+	if (model_name_ == "bishop.obj")
+	{
+		eye_z = 0.5f;
+	}
+	if (model_name_ == "bunny.obj")
+	{
+		eye_z = 3.0f;
+	}
+	if (model_name_ == "camera.obj")
+	{
+		eye_z = 10.0f;
+	}
+	if (model_name_ == "chain.obj")
+	{
+		eye_z = 10.0f;
+	}
+	if (model_name_ == "cow.obj")
+	{
+		eye_z = 10.0f;
+	}
+	if (model_name_ == "demo.obj")
+	{
+		eye_z = 10.0f;
+	}
+	if (model_name_ == "dolphin.obj")
+	{
+		eye_z = 900.0f;
+	}
+	if (model_name_ == "pawn.obj")
+	{
+		eye_z = 0.5f;
+	}
+	if (model_name_ == "teapot.obj")
+	{
+		eye_z = 10.0f;
+	}
+	return eye_z;
 }
