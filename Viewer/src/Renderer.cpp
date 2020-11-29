@@ -299,7 +299,9 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(const Scene& scene)
 {
-	
+	int half_width = viewport_width_ / 2;
+	int half_height = viewport_height_ / 2;
+
 	const glm::ivec3 c1(0, 0,1);
 	int index0, index1, index2;
 	glm::vec3 v0, v1, v2;
@@ -307,12 +309,15 @@ void Renderer::Render(const Scene& scene)
 	glm::vec4 V0new, V1new, V2new;
 	glm::vec4 UpL1, UpL2, UpR1, UpR2, DnL1, DnL2, DnR1, DnR2;
 	float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0;
-	glm::mat4x4 Stmat,transmat;
+	glm::mat4x4 inverse, transmat, ortho, st_view, lookat;
 	if (scene.GetModelCount())
 	{
 		auto model = scene.GetActiveModel();
-		Stmat = model.GetSTmat();
 		
+		inverse = scene.GetActiveCamera().Get_Invtransmatrix();
+		ortho = scene.GetActiveCamera().GetProjectionTransformation();
+		lookat = scene.GetActiveCamera().Get_Lookat();
+		st_view = glm::scale(glm::vec3(half_width , half_height, 1)) * glm::translate(glm::vec3(1, 1, 0));
 			for (int i = 0; i < scene.GetActiveModel().GetFacesCount(); i++)   // #2
 			{
 				index0 = scene.GetActiveModel().GetFace(i).GetVertexIndex(0);
@@ -321,21 +326,25 @@ void Renderer::Render(const Scene& scene)
 				v0 = scene.GetActiveModel().GetVertex(index0);
 				v1 = scene.GetActiveModel().GetVertex(index1);
 				v2 = scene.GetActiveModel().GetVertex(index2);
-				//h0 = Stmat *glm::vec4(v0, 1);
-				//h1 = Stmat *glm::vec4(v1, 1);
-				//h2 = Stmat *glm::vec4(v2, 1);
-				transmat = scene.GetActiveModel().Get_transmatrix() * Stmat;
+			
+				transmat = scene.GetActiveModel().Get_transmatrix() ;
 				
-				V0new = transmat * glm::vec4(v0, 1);
-				V1new = transmat * glm::vec4(v1, 1);
-				V2new = transmat * glm::vec4(v2, 1);
-				//DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h1.x / h1.w, h1.y / h1.w),c1);
-				//DrawLine(glm::ivec2(h0.x / h0.w, h0.y / h0.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
-				//DrawLine(glm::ivec2(h1.x / h1.w, h1.y / h1.w), glm::ivec2(h2.x / h2.w, h2.y / h2.w),c1);
-				DrawLine(glm::ivec2(V0new.x / V0new.w, V0new.y / V0new.w), glm::ivec2(V1new.x / V1new.w, V1new.y / V1new.w), c1);
-				DrawLine(glm::ivec2(V0new.x / V0new.w, V0new.y / V0new.w), glm::ivec2(V2new.x / V2new.w, V2new.y / V2new.w), c1);
-				DrawLine(glm::ivec2(V1new.x / V1new.w, V1new.y / V1new.w), glm::ivec2(V2new.x / V2new.w, V2new.y / V2new.w), c1);
-				//model.printmat();
+				V0new =  ortho * lookat * inverse* transmat * glm::vec4(v0, 1);
+				V1new = ortho * lookat * inverse* transmat* glm::vec4(v1, 1);
+				V2new = ortho * lookat * inverse*transmat * glm::vec4(v2, 1);
+				if (!(scene.GetActiveCamera().Get_OrthoGraphic()))
+				{
+					V0new /= V0new.w;
+					V1new /= V1new.w;
+					V2new /= V2new.w;
+				}
+				V0new = st_view * V0new;
+				V1new = st_view * V1new;
+				V2new = st_view * V2new;
+				DrawLine(glm::ivec2(V0new.x , V0new.y ), glm::ivec2(V1new.x , V1new.y ), c1);
+				DrawLine(glm::ivec2(V0new.x , V0new.y ), glm::ivec2(V2new.x , V2new.y ), c1);
+				DrawLine(glm::ivec2(V1new.x , V1new.y ), glm::ivec2(V2new.x , V2new.y ), c1);
+				
 
 			}
 			if (scene.GetActiveModel().Get_showbox())
@@ -400,7 +409,6 @@ void Renderer::Render(const Scene& scene)
 			{
 				for (int i = 0; i < model.GetFacesCount(); i++)
 				{
-					//Face face = model.GetFace(i);
 					int Ver1 = model.GetFace(i).GetVertexIndex(0);
 					int Ver2 = model.GetFace(i).GetVertexIndex(1);
 					int Ver3 = model.GetFace(i).GetVertexIndex(2);
@@ -438,3 +446,17 @@ int Renderer::GetViewportHeight() const
 {
 	return viewport_height_;
 }
+
+void Renderer::SetViewportWidth(int New_width)
+{
+	viewport_width_ = New_width;
+	
+
+}
+
+void Renderer::SetViewportHeight(int New_height)
+{
+	viewport_height_ = New_height;
+
+}
+

@@ -30,6 +30,14 @@ bool vertexcheck = false;
 bool rtxm = false,rtym = false, rtzm = false;
 bool rtxw = false,rtyw = false, rtzw = false;
 
+bool camera_Tm = false, camera_Rm = false;
+bool camera_Tw = false, camera_Rw = false;
+bool camera_rtxm = false, camera_rtym = false, camera_rtzm = false;
+bool camera_rtxw = false, camera_rtyw = false, camera_rtzw = false;
+bool orthographic = true;
+bool look_at = false;
+
+
 
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 
@@ -55,7 +63,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 
 int main(int argc, char **argv)
 {
-	int windowWidth = 1280, windowHeight = 720;
+	int windowWidth = 1920, windowHeight = 1080;
 	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
 	if (!window)
 		return 1;
@@ -65,6 +73,7 @@ int main(int argc, char **argv)
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
+	
 	Scene scene = Scene();
 	
 	ImGuiIO& io = SetupDearImgui(window);
@@ -133,9 +142,13 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-	
+	glfwSetWindowAspectRatio(window, renderer.GetViewportWidth(), renderer.GetViewportHeight());
 	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
 	{
+		
+		//renderer.SetViewportHeight(frameBufferHeight);
+		//renderer.SetViewportWidth(frameBufferWidth);
+		
 		// TODO: Set new aspect ratio
 	}
 
@@ -196,6 +209,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				if (result == NFD_OKAY)
 				{
 					scene.AddModel(Utils::LoadMeshModel(outPath));
+					scene.AddCamera(std::make_shared<Camera>());
 					free(outPath);
 				}
 				else if (result == NFD_CANCEL)
@@ -273,7 +287,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		int scale = 0, trans = 0, rotate = 0;
 		
-		ImGui::Begin("transformation");
+		ImGui::Begin("Model transformation");
 	    ImGui::ListBox("select\n", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items),2);
 		
 
@@ -282,7 +296,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float lastax_m = 0.0f;
 		static float ay_m = 0.0f;
 		static float lastay_m = 0.0f;
-		
 		static float az_m = 0.0f;
 		static float lastaz_m = 0.0f;
 
@@ -292,7 +305,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float lastax_w = 0.0f;
 		static float ay_w = 0.0f;
 		static float lastay_w = 0.0f;
-
 		static float az_w = 0.0f;
 		static float lastaz_w = 0.0f;
 		
@@ -306,7 +318,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 
 		
-		if (listbox_item_current == 0) // local(modle)
+		if (listbox_item_current == 0) // local(model)
 		{
 			
 			ImGui::Checkbox("translation", &Tm);
@@ -563,4 +575,223 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	}
 
 
+	if (scene.GetModelCount())
+	{
+		const char* Camera_listbox_items[] = { "local transformation","world transformation" };
+		static int listbox_Camera_current = 0;
+		const char* Camera_listbox_rotations[] = { "rotate around x","rotate around y","rotate around z" };
+		static int camera_current_rotation = 0;
+		const char* Camera_listbox_proj[] = { "orthographic projection","perspective projection" };
+		static int camera_current_proj = 0;
+
+
+		static float camera_Tm_vec[3] = { 0.0f, 0.0f, 0.0f };
+		static float camera_Tw_vec[3] = { 0.0f, 0.0f, 0.0f };
+		static float ortho_val = 0.5f;
+		static float fovy_m = 45.0f;
+
+		static float camera_anglem = 0.0f;
+		static float camera_ax_m = 0.0f;
+		static float camera_lastax_m = 0.0f;
+		static float camera_ay_m = 0.0f;
+		static float camera_lastay_m = 0.0f;
+		static float camera_az_m = 0.0f;
+		static float camera_lastaz_m = 0.0f;
+
+		static float camera_anglew = 0.0f;
+		static float camera_ax_w = 0.0f;
+		static float camera_lastax_w = 0.0f;
+		static float camera_ay_w = 0.0f;
+		static float camera_lastay_w = 0.0f;
+		static float camera_az_w = 0.0f;
+		static float camera_lastaz_w = 0.0f;
+
+		ImGui::Begin("Camera transformation");
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Projection\n");
+		ImGui::ListBox("select one projection", &camera_current_proj, Camera_listbox_proj, IM_ARRAYSIZE(Camera_listbox_proj), 2);
+
+		//scene.GetActiveCamera().Set_OrthoGraphic(orthographic, 0);
+		//ImGui::Checkbox("orthographic", &orthographic);
+		//ImGui::Checkbox("orthographic", &orthographic);
+		if (camera_current_proj==0)
+		{
+			ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);            // Edit 1 float using a slider from 0.0f to 1.0f
+
+			scene.GetActiveCamera().Set_OrthoGraphic(1, ortho_val); 
+		}
+		else if(camera_current_proj == 1)
+		{
+			ImGui::SliderFloat("fovy", &fovy_m, 10, 180);
+			scene.GetActiveCamera().Set_Perspective(0,glm::radians(fovy_m));
+
+		}
+
+		ImGui::ListBox("select\n", &listbox_Camera_current, Camera_listbox_items, IM_ARRAYSIZE(Camera_listbox_items), 2);
+
+		if (listbox_Camera_current == 0) // local(model)
+		{
+			ImGui::Checkbox("translation", &camera_Tm);
+			if (camera_Tm)
+			{
+
+				ImGui::InputFloat("tranlation x steps", &camera_Tm_vec[0]);
+				ImGui::InputFloat("tranlation y steps", &camera_Tm_vec[1]);
+				ImGui::InputFloat("tranlation z steps", &camera_Tm_vec[2]);
+
+
+				scene.GetActiveCamera().Set_Tm_mat(glm::translate(glm::vec3(camera_Tm_vec[0], camera_Tm_vec[1], camera_Tm_vec[2])));
+				scene.GetActiveCamera().Set_transmatrix();
+			}
+			ImGui::Checkbox("Rotation", &camera_Rm);
+			if (camera_Rm)
+			{
+
+				ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "select any rotation:\n");
+				ImGui::ListBox("select one ", &camera_current_rotation, Camera_listbox_rotations, IM_ARRAYSIZE(Camera_listbox_rotations), 3);
+
+				ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "set the angle:\n");
+
+				if (camera_current_rotation == 0) //around x
+				{
+					ImGui::SliderAngle("slider angle", &camera_ax_m, -360, 360);
+
+					if (camera_lastax_m != camera_ax_m)
+					{
+						camera_lastax_m = camera_ax_m;
+						scene.GetActiveCamera().Set_Rm_mat(glm::rotate(camera_ax_m, glm::vec3(1, 0, 0)), 0);
+						scene.GetActiveCamera().Set_transmatrix();
+					}
+
+
+
+				}
+
+				if (camera_current_rotation == 1)// around y
+				{
+					ImGui::SliderAngle("slider angle", &camera_ay_m, -360, 360);
+					if (camera_lastay_m != camera_ay_m)
+					{
+						camera_lastay_m = camera_ay_m;
+						scene.GetActiveCamera().Set_Rm_mat(glm::rotate(camera_ay_m, glm::vec3(0, 1, 0)), 1);
+						scene.GetActiveCamera().Set_transmatrix();
+					}
+				}
+				if (camera_current_rotation == 2) // around z
+				{
+					ImGui::SliderAngle("slider angle", &camera_az_m, -360, 360);
+
+					if (camera_lastaz_m != camera_az_m)
+					{
+						camera_lastaz_m = camera_az_m;
+						scene.GetActiveCamera().Set_Rm_mat(glm::rotate(camera_az_m, glm::vec3(0, 0, 1)), 2);
+						scene.GetActiveCamera().Set_transmatrix();
+					}
+
+
+				}
+			}
+
+		}
+		else
+		{
+
+			ImGui::Checkbox("translation", &camera_Tw);
+			if (camera_Tw)
+			{
+
+				ImGui::InputFloat("tranlation x steps", &camera_Tw_vec[0]);
+				ImGui::InputFloat("tranlation y steps", &camera_Tw_vec[1]);
+				ImGui::InputFloat("tranlation z steps", &camera_Tw_vec[2]);
+
+				scene.GetActiveCamera().Set_Tw_mat(glm::translate(glm::vec3(camera_Tw_vec[0], camera_Tw_vec[1], camera_Tw_vec[2])));
+				scene.GetActiveCamera().Set_transmatrix();
+			}
+			ImGui::Checkbox("Rotation", &camera_Rw);
+			if (camera_Rw)
+			{
+
+				ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "select any rotation:\n");
+				ImGui::ListBox("", &camera_current_rotation, Camera_listbox_rotations, IM_ARRAYSIZE(Camera_listbox_rotations), 3);
+
+				ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "set the angle:\n");
+
+				if (camera_current_rotation == 0)
+				{
+					ImGui::SliderAngle("slider angle", &camera_ax_w, -360, 360);
+
+					if (camera_lastax_w != camera_ax_w)
+					{
+						camera_lastax_w = camera_ax_w;
+						scene.GetActiveCamera().Set_Rm_mat(glm::rotate(camera_ax_w, glm::vec3(1, 0, 0)), 0);
+						scene.GetActiveCamera().Set_transmatrix();
+					}
+
+
+
+				}
+				if (camera_current_rotation == 1)
+				{
+					ImGui::SliderAngle("slider angle", &camera_ay_w, -360, 360);
+					if (camera_lastay_w != camera_ay_w)
+					{
+						camera_lastay_w = camera_ay_w;
+						scene.GetActiveCamera().Set_Rm_mat(glm::rotate(camera_ay_w, glm::vec3(0, 1, 0)), 1);
+						scene.GetActiveCamera().Set_transmatrix();
+					}
+				}
+				if (camera_current_rotation == 2)
+				{
+					ImGui::SliderAngle("slider angle", &camera_az_w, -360, 360);
+
+					if (camera_lastaz_w != camera_az_w)
+					{
+						camera_lastaz_w = camera_az_w;
+						scene.GetActiveCamera().Set_Rm_mat(glm::rotate(camera_az_w, glm::vec3(0, 0, 1)), 2);
+						scene.GetActiveCamera().Set_transmatrix();
+					}
+
+
+				}
+
+			}
+		}
+
+		//ImGui::End();
+
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Look at:\n");
+		
+			static float eye_vec[3] = { 0.0f, 0.0f, 0.5f };
+			static float at_vec[3] = { 0.0f, 0.0f, 0.0f };
+			static float up_vec[3] = { 0.0f, 1.0f, 0.0f };
+
+			
+			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Eye\n");
+
+			ImGui::InputFloat("X eye", &eye_vec[0]);
+			ImGui::InputFloat("Y eye", &eye_vec[1]);
+			ImGui::InputFloat("Z eye", &eye_vec[2]);
+			scene.GetActiveCamera().Set_Eye(eye_vec[0], eye_vec[1], eye_vec[2]);
+			scene.GetActiveCamera().Set_Lookat();
+			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "At\n");
+
+			ImGui::InputFloat("X at", &at_vec[0]);
+			ImGui::InputFloat("Y at", &at_vec[1]);
+			ImGui::InputFloat("Z at", &at_vec[2]);
+			scene.GetActiveCamera().Set_At(at_vec[0], at_vec[1], at_vec[2]);
+			scene.GetActiveCamera().Set_Lookat();
+
+			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Up\n");
+
+			ImGui::InputFloat("X up", &up_vec[0]);
+			ImGui::InputFloat("Y up", &up_vec[1]);
+			ImGui::InputFloat("Z up", &up_vec[2]);
+			scene.GetActiveCamera().Set_Up(up_vec[0], up_vec[1], up_vec[2]);
+			scene.GetActiveCamera().Set_Lookat();
+
+
+			
+
+		
+		ImGui::End();
+	}
 }
