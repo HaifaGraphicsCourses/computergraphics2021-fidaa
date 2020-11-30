@@ -12,9 +12,8 @@ public:
 	void SwapBuffers();
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;
-	void SetViewportWidth(float New_width);
 	int GetViewportHeight() const;
-	void SetViewportHeight(float New_height);
+	
 	
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);

@@ -299,8 +299,8 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(const Scene& scene)
 {
-	float half_width = viewport_width_ / 2;
-	float half_height = viewport_height_ / 2;
+	int half_width = viewport_width_ / 2;
+	int half_height = viewport_height_ / 2;
 
 	const glm::ivec3 c1(0, 0,1);
 	int index0, index1, index2;
@@ -490,18 +490,5 @@ int Renderer::GetViewportWidth() const
 int Renderer::GetViewportHeight() const
 {
 	return viewport_height_;
-}
-
-void Renderer::SetViewportWidth(float New_width)
-{
-    viewport_width_ = New_width;
-	
-
-}
-
-void Renderer::SetViewportHeight(float New_height)
-{
-	viewport_height_ = New_height;
-
 }
 

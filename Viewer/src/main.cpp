@@ -143,23 +143,12 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 	
-	glfwSetWindowAspectRatio(window, renderer.GetViewportWidth(), renderer.GetViewportHeight());
 
 	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
 	{
 
-		
-		renderer.SetViewportWidth(frameBufferWidth);
-		renderer.SetViewportHeight(frameBufferHeight);
-	   
-		if (scene.GetCameraCount())
-		{
-			scene.GetActiveCamera().SetCam_width(frameBufferWidth);
-			scene.GetActiveCamera().SetCam_height(frameBufferHeight);
-			scene.GetActiveCamera().SetCam_aspectratio(frameBufferWidth, frameBufferHeight);
-			
-		}
-		// TODO: Set new aspect ratio*/
+		glfwSetWindowAspectRatio(window, renderer.GetViewportWidth(), renderer.GetViewportHeight());
+
 	}
 
 	if (!io.WantCaptureKeyboard)
