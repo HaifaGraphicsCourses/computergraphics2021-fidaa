@@ -36,7 +36,7 @@ bool camera_rtxm = false, camera_rtym = false, camera_rtzm = false;
 bool camera_rtxw = false, camera_rtyw = false, camera_rtzw = false;
 bool orthographic = true;
 bool look_at = false;
-
+static float aspectratio = 1920 / 1080;
 
 
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
@@ -148,6 +148,8 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	{
 
 		glfwSetWindowAspectRatio(window, renderer.GetViewportWidth(), renderer.GetViewportHeight());
+		aspectratio = renderer.GetViewportWidth() / renderer.GetViewportHeight();
+		
 
 	}
 
@@ -804,36 +806,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			static float eye_vec[3] = { 0.0f, 0.0f, scene.GetActiveModel().Get_Zeye() };
 			static float at_vec[3] = { 0.0f, 0.0f, 0.0f };
 			static float up_vec[3] = { 0.0f, 1.0f, 0.0f };
-			//if (scene.GetActiveModel().GetModelName() == "beethoven.obj")
-			//{
-				//eye_vec[2] = 30.0f;
-				//static  eye_vec[2] = 30.0f;
-			//}
-			/*
-			if (scene.GetActiveModel().GetModelName() == "bunny.obj")
-			{
-				eye_vec[2] = 3.0f;
-			}
-			if (scene.GetActiveModel().GetModelName() == "camera.obj")
-			{
-				eye_vec[2] = 10.0f;
-			}
-			if (scene.GetActiveModel().GetModelName() == "chain.obj")
-			{
-				eye_vec[2] = 10.0f;
-			}
-			if (scene.GetActiveModel().GetModelName() == "cow.obj")
-			{
-				eye_vec[2] = 20.0f;
-			}
-			if (scene.GetActiveModel().GetModelName() == "demo.obj")
-			{
-				eye_vec[2] = 10.0f;
-			}
-			if (scene.GetActiveModel().GetModelName() == "dolphin.obj")
-			{
-				eye_vec[2] = 50.0f;
-			}*/
+			
 			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Eye\n");
 
 			ImGui::InputFloat("X eye", &eye_vec[0]);
@@ -858,8 +831,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			scene.GetActiveCamera().SetCameraLookAt();
 
 
+			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "aspect ratio =");
+			ImGui::Text(" %f",aspectratio);
 			
-
 		
 		ImGui::End();
 	}
