@@ -26,6 +26,25 @@ const glm::mat4x4& Camera::GetViewTransformation() const
 	return view_transformation_;
 }
 
+void Camera::SetCam_width(float w_t)
+{
+	this->w = w_t;
+}
+
+
+void Camera::SetCam_height(float h_t)
+{
+	this->h = h_t;
+}
+
+
+void Camera::SetCam_aspectratio(float w_a , float h_a)
+{
+	this->w = w_a;
+	this->h = h_a;
+	this->aspectrat = w_a/h_a;
+}
+
 void Camera::Set_Tw_mat(glm::mat4x4& transformation)
 {
 	Tw = transformation;

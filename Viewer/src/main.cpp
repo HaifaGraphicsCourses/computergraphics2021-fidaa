@@ -142,14 +142,24 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	int frameBufferWidth, frameBufferHeight;
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+	
 	glfwSetWindowAspectRatio(window, renderer.GetViewportWidth(), renderer.GetViewportHeight());
+
 	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
 	{
+
 		
-		//renderer.SetViewportHeight(frameBufferHeight);
-		//renderer.SetViewportWidth(frameBufferWidth);
-		
-		// TODO: Set new aspect ratio
+		renderer.SetViewportWidth(frameBufferWidth);
+		renderer.SetViewportHeight(frameBufferHeight);
+	   
+		if (scene.GetCameraCount())
+		{
+			scene.GetActiveCamera().SetCam_width(frameBufferWidth);
+			scene.GetActiveCamera().SetCam_height(frameBufferHeight);
+			scene.GetActiveCamera().SetCam_aspectratio(frameBufferWidth, frameBufferHeight);
+			
+		}
+		// TODO: Set new aspect ratio*/
 	}
 
 	if (!io.WantCaptureKeyboard)
@@ -481,6 +491,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 		scene.GetActiveModel().Set_transmatrix();
 		scene.GetActiveModel().Set_Reset(0);
+		
 		int reset = ImGui::Button("Reset");
 		if (reset)
 		{

@@ -299,8 +299,8 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(const Scene& scene)
 {
-	int half_width = viewport_width_ / 2;
-	int half_height = viewport_height_ / 2;
+	float half_width = viewport_width_ / 2;
+	float half_height = viewport_height_ / 2;
 
 	const glm::ivec3 c1(0, 0,1);
 	int index0, index1, index2;
@@ -331,7 +331,7 @@ void Renderer::Render(const Scene& scene)
 				
 				V0new = projection * lookat * inverse* transmat * glm::vec4(v0, 1);
 				V1new = projection * lookat * inverse* transmat* glm::vec4(v1, 1);
-				V2new = projection * lookat * inverse*transmat * glm::vec4(v2, 1);
+				V2new = projection * lookat * inverse* transmat * glm::vec4(v2, 1);
 				if (!(scene.GetActiveCamera().Get_OrthoGraphic()))
 				{
 					V0new /= V0new.w;
@@ -357,32 +357,58 @@ void Renderer::Render(const Scene& scene)
 				minZ = scene.GetActiveModel().Get_minZ();
 
 
-				UpR1 = transmat * glm::vec4(maxX, maxY, maxZ, 1);
-				UpR2 = transmat * glm::vec4(maxX, maxY, minZ, 1);
-				UpL1 = transmat * glm::vec4(minX, maxY, maxZ, 1);
-				UpL2 = transmat * glm::vec4(minX, maxY, minZ, 1);
+				UpR1 = projection * lookat * inverse * transmat * glm::vec4(maxX, maxY, maxZ, 1);
+				UpR2 = projection * lookat * inverse * transmat * glm::vec4(maxX, maxY, minZ, 1);
+				UpL1 = projection * lookat * inverse * transmat * glm::vec4(minX, maxY, maxZ, 1);
+				UpL2 = projection * lookat * inverse * transmat * glm::vec4(minX, maxY, minZ, 1);
 
-				DnR1 = transmat * glm::vec4(maxX, minY, maxZ, 1);
-				DnR2 = transmat * glm::vec4(maxX, minY, minZ, 1);
-				DnL1 = transmat * glm::vec4(minX, minY, maxZ, 1);
-				DnL2 = transmat * glm::vec4(minX, minY, minZ, 1);
-				//R1
-				DrawLine(glm::ivec2(UpR1.x / UpR1.w, UpR1.y / UpR1.w), glm::ivec2(UpR2.x / UpR2.w, UpR2.y / UpR2.w), c1);
-				DrawLine(glm::ivec2(UpR1.x / UpR1.w, UpR1.y / UpR1.w), glm::ivec2(UpL1.x / UpL1.w, UpL1.y / UpL1.w), c1);
-				DrawLine(glm::ivec2(UpR1.x / UpR1.w, UpR1.y / UpR1.w), glm::ivec2(DnR1.x / DnR1.w, DnR1.y / DnR1.w), c1);
+				DnR1 = projection * lookat * inverse * transmat * glm::vec4(maxX, minY, maxZ, 1);
+				DnR2 = projection * lookat * inverse * transmat * glm::vec4(maxX, minY, minZ, 1);
+				DnL1 = projection * lookat * inverse * transmat * glm::vec4(minX, minY, maxZ, 1);
+				DnL2 = projection * lookat * inverse * transmat * glm::vec4(minX, minY, minZ, 1);
+				if (!(scene.GetActiveCamera().Get_OrthoGraphic()))
+				{
+					UpR1 /= UpR1.w;
+					UpR2 /= UpR2.w;
+					UpL1 /= UpL1.w;
+					UpL2 /= UpL2.w;
 
-				DrawLine(glm::ivec2(UpL2.x / UpL2.w, UpL2.y / UpL2.w), glm::ivec2(UpR2.x / UpR2.w, UpR2.y / UpR2.w), c1);
-				DrawLine(glm::ivec2(UpL2.x / UpL2.w, UpL2.y / UpL2.w), glm::ivec2(UpL1.x / UpL1.w, UpL1.y / UpL1.w), c1);
-				DrawLine(glm::ivec2(UpL2.x / UpL2.w, UpL2.y / UpL2.w), glm::ivec2(DnL2.x / DnL2.w, DnL2.y / DnL2.w), c1);
-
-				DrawLine(glm::ivec2(DnL1.x / DnL1.w, DnL1.y / DnL1.w), glm::ivec2(DnR1.x / DnR1.w, DnR1.y / DnR1.w), c1);
-				DrawLine(glm::ivec2(DnL1.x / DnL1.w, DnL1.y / DnL1.w), glm::ivec2(UpL1.x / UpL1.w, UpL1.y / UpL1.w), c1);
-				DrawLine(glm::ivec2(DnL1.x / DnL1.w, DnL1.y / DnL1.w), glm::ivec2(DnL2.x / DnL2.w, DnL2.y / DnL2.w), c1);
+					DnR1 /= DnR1.w;
+					DnR2 /= DnR2.w;
+					DnL1 /= DnL1.w;
+					DnL2 /= DnL2.w;
 
 
-				DrawLine(glm::ivec2(DnR2.x / DnR2.w, DnR2.y / DnR2.w), glm::ivec2(DnR1.x / DnR1.w, DnR1.y / DnR1.w), c1);
-				DrawLine(glm::ivec2(DnR2.x / DnR2.w, DnR2.y / DnR2.w), glm::ivec2(UpR2.x / UpR2.w, UpR2.y / UpR2.w), c1);
-				DrawLine(glm::ivec2(DnR2.x / DnR2.w, DnR2.y / DnR2.w), glm::ivec2(DnL2.x / DnL2.w, DnL2.y / DnL2.w), c1);
+				}
+					UpR1 = st_view * UpR1;
+					UpR2 = st_view * UpR2;
+					UpL1 = st_view * UpL1;
+					UpL2 = st_view * UpL2;
+
+					DnR1 = st_view * DnR1;
+					DnR2 = st_view * DnR2;
+					DnL1 = st_view * DnL1;
+					DnL2 = st_view * DnL2;
+
+
+
+					DrawLine(glm::ivec2(UpR1.x, UpR1.y), glm::ivec2(UpR2.x, UpR2.y), c1);
+					DrawLine(glm::ivec2(UpR1.x, UpR1.y), glm::ivec2(UpL1.x, UpL1.y), c1);
+					DrawLine(glm::ivec2(UpR1.x, UpR1.y), glm::ivec2(DnR1.x, DnR1.y), c1);
+
+					DrawLine(glm::ivec2(UpL2.x, UpL2.y), glm::ivec2(UpR2.x, UpR2.y), c1);
+					DrawLine(glm::ivec2(UpL2.x, UpL2.y), glm::ivec2(UpL1.x, UpL1.y), c1);
+					DrawLine(glm::ivec2(UpL2.x, UpL2.y), glm::ivec2(DnL2.x, DnL2.y), c1);
+
+					DrawLine(glm::ivec2(DnL1.x, DnL1.y), glm::ivec2(DnR1.x, DnR1.y), c1);
+					DrawLine(glm::ivec2(DnL1.x, DnL1.y), glm::ivec2(UpL1.x, UpL1.y), c1);
+					DrawLine(glm::ivec2(DnL1.x, DnL1.y), glm::ivec2(DnL2.x, DnL2.y), c1);
+
+
+					DrawLine(glm::ivec2(DnR2.x, DnR2.y), glm::ivec2(DnR1.x, DnR1.y), c1);
+					DrawLine(glm::ivec2(DnR2.x, DnR2.y), glm::ivec2(UpR2.x, UpR2.y), c1);
+					DrawLine(glm::ivec2(DnR2.x, DnR2.y), glm::ivec2(DnL2.x, DnL2.y), c1);
+				
 			}
 			//auto model = scene.GetActiveModel();
 			if (model.Get_facenormals())
@@ -397,9 +423,18 @@ void Renderer::Render(const Scene& scene)
 					glm::vec3 v2tp = model.GetVertex(Ver2);
 					glm::vec3 v3tp = model.GetVertex(Ver3);
 					glm::vec3 faceNormal = normalize(cross(glm::vec3(v1tp - v2tp), glm::vec3(v1tp - v3tp)));
-					glm::vec4 v1 = transmat * glm::vec4(model.GetVertex(Ver1), 1);
-					glm::vec4 v2 = transmat * glm::vec4(model.GetVertex(Ver2), 1);
-					glm::vec4 v3 = transmat * glm::vec4(model.GetVertex(Ver3), 1);
+					glm::vec4 v1 =  projection * lookat * inverse * transmat * glm::vec4(model.GetVertex(Ver1), 1);
+					glm::vec4 v2 =  projection * lookat * inverse * transmat * glm::vec4(model.GetVertex(Ver2), 1);
+					glm::vec4 v3 =  projection * lookat * inverse * transmat * glm::vec4(model.GetVertex(Ver3), 1);
+					if (!(scene.GetActiveCamera().Get_OrthoGraphic()))
+					{
+						v1 /= v1.w;
+						v2 /= v2.w;
+						v3 /= v3.w;
+					}
+					v1 = st_view * v1;
+					v2 = st_view * v2;
+					v3 = st_view * v3;
 					glm::vec3 Center = (v1 + v2 + v3) / 3.0f;
 					glm::vec4 normalvec = glm::scale(glm::vec3(50,50,50)) * model.Get_Rw_mat() * model.Get_Rm_mat() * glm::vec4(faceNormal, 1) + glm::vec4(Center, 0);
 					DrawLine(glm::ivec2(Center.x, Center.y), glm::ivec2(normalvec.x, normalvec.y), c1);
@@ -415,9 +450,19 @@ void Renderer::Render(const Scene& scene)
 					int Normali1 = model.GetFace(i).GetNormalIndex(0);
 					int Normali2 = model.GetFace(i).GetNormalIndex(1);
 					int Normali3 = model.GetFace(i).GetNormalIndex(2);
-					glm::vec4 v1 = transmat * glm::vec4(model.GetVertex(Ver1), 1);
-					glm::vec4 v2 = transmat * glm::vec4(model.GetVertex(Ver2), 1);
-					glm::vec4 v3 = transmat * glm::vec4(model.GetVertex(Ver3), 1);
+					glm::vec4 v1 =  projection * lookat * inverse * transmat * glm::vec4(model.GetVertex(Ver1), 1);
+					glm::vec4 v2 =  projection * lookat * inverse * transmat * glm::vec4(model.GetVertex(Ver2), 1);
+					glm::vec4 v3 =  projection * lookat * inverse * transmat * glm::vec4(model.GetVertex(Ver3), 1);
+					if (!(scene.GetActiveCamera().Get_OrthoGraphic()))
+					{
+						v1 /= v1.w;
+						v2 /= v2.w;
+						v3 /= v3.w;
+					}
+
+					v1 = st_view * v1;
+					v2 = st_view * v2;
+					v3 = st_view * v3;
 					glm::vec4 nv1 = glm::scale(glm::vec3(50, 50, 50)) * model.Get_Rw_mat() * model.Get_Rm_mat() * glm::vec4(model.Get_normalvertex(Normali1), 1);
 					glm::vec4 nv2 = glm::scale(glm::vec3(50, 50, 50)) * model.Get_Rw_mat() * model.Get_Rm_mat() * glm::vec4(model.Get_normalvertex(Normali2), 1);
 					glm::vec4 nv3 = glm::scale(glm::vec3(50, 50, 50)) * model.Get_Rw_mat() * model.Get_Rm_mat() * glm::vec4(model.Get_normalvertex(Normali3), 1);
@@ -447,14 +492,14 @@ int Renderer::GetViewportHeight() const
 	return viewport_height_;
 }
 
-void Renderer::SetViewportWidth(int New_width)
+void Renderer::SetViewportWidth(float New_width)
 {
-	viewport_width_ = New_width;
+    viewport_width_ = New_width;
 	
 
 }
 
-void Renderer::SetViewportHeight(int New_height)
+void Renderer::SetViewportHeight(float New_height)
 {
 	viewport_height_ = New_height;
 
