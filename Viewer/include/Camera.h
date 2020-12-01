@@ -11,9 +11,7 @@ public:
 
 	const glm::mat4x4& GetProjectionTransformation() const;
 	const glm::mat4x4& GetViewTransformation() const;
-	void SetCam_width(float w_t);
-	void SetCam_height(float h_t);
-	void SetCam_aspectratio(float w_a, float h_a);
+	
 	void Set_Tw_mat(glm::mat4x4& transformation);
 	void Set_Rw_mat(glm::mat4x4& transformation, int flag);
 	void Set_Tm_mat(glm::mat4x4& transformation);
