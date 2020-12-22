@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <imgui/imgui.h>
 
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
@@ -302,7 +303,9 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
 
-	const glm::ivec3 c1(0, 0,1);
+	
+
+	 glm::ivec3 c1(0, 0,1);
 	int index0, index1, index2;
 	glm::vec3 v0, v1, v2;
 
@@ -310,6 +313,15 @@ void Renderer::Render(const Scene& scene)
 	glm::vec4 UpL1, UpL2, UpR1, UpR2, DnL1, DnL2, DnR1, DnR2;
 	float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0;
 	glm::mat4x4 inverse, transmat, projection, st_view, lookat;
+	int r = 10, g = 10, b = 10;
+	float a = 1.0f / 255.0f;
+	//V0new= glm::vec4(100,200,300,1);
+	//V1new = glm::vec4(300, 700, 300, 1);
+	//V2new = glm::vec4(700, 400, 300, 1);
+	//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), c1);
+	//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V2new.x, V2new.y), c1);
+	//DrawLine(glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
+	//TrianglswithColors(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
 	if (scene.GetModelCount())
 	{
 		auto model = scene.GetActiveModel();
@@ -344,8 +356,24 @@ void Renderer::Render(const Scene& scene)
 				DrawLine(glm::ivec2(V0new.x , V0new.y ), glm::ivec2(V1new.x , V1new.y ), c1);
 				DrawLine(glm::ivec2(V0new.x , V0new.y ), glm::ivec2(V2new.x , V2new.y ), c1);
 				DrawLine(glm::ivec2(V1new.x , V1new.y ), glm::ivec2(V2new.x , V2new.y ), c1);
+				TrianglswithColors(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
+				if (r >= 255)
+				{
+					r = 1;
+				}
+				else r + 10;
+				if (b >= 255)
+				{
+					b = 1;
+				}
+				else b + 10;
+				if (g >= 255)
+				{
+					g = 1;
+				}
+				else g + 10;
 				
-
+				
 			}
 			if (scene.GetActiveModel().Get_showbox())
 			{
@@ -471,12 +499,8 @@ void Renderer::Render(const Scene& scene)
 					DrawLine(glm::ivec2(v3.x, v3.y), glm::ivec2(nv3.x + v3.x, nv3.y + v3.y), c1);
 				}
 			}
-			// #1 
-		/*
-		model.PrintFaces();
-
-		model.PrintVertices();
-		exit(0); */
+			
+		
 	}
 	return;
 
@@ -490,5 +514,107 @@ int Renderer::GetViewportWidth() const
 int Renderer::GetViewportHeight() const
 {
 	return viewport_height_;
+}
+
+void Renderer::TrianglswithColors(const glm::ivec2& p1, const glm::ivec2& p2, const glm::ivec2& p3, const glm::vec3& color)
+{
+	float maxX = 0, minX = 0, maxY = 0, minY = 0;
+	float temp = 255 * 255;
+	glm::vec3 random_color = glm::vec3(rand() / temp, rand() / temp, rand() / temp);
+	if (p1.x >= p2.x && p1.x >= p3.x)
+	{
+		maxX = p1.x;
+	}
+	if (p2.x >= p1.x && p2.x >= p3.x)
+	{
+		maxX = p2.x;
+	}
+	if (p3.x >= p2.x && p3.x >= p1.x)
+	{
+		maxX = p3.x;
+	}
+	//minx
+	if (p1.x <= p2.x && p1.x <= p3.x)
+	{
+		minX = p1.x;
+	}
+	if (p2.x <= p1.x && p2.x <= p3.x)
+	{
+		minX = p2.x;
+	}
+	if (p3.x <= p2.x && p3.x <= p1.x)
+	{
+		minX = p3.x;
+	}
+	//maxy
+	if (p1.y >= p2.y && p1.y >= p3.y)
+	{
+		maxY = p1.y;
+	}
+	if (p2.y >= p1.y && p2.y >= p3.y)
+	{
+		maxY = p2.y;
+	}
+	if (p3.y >= p2.y && p3.y >= p1.y)
+	{
+		maxY = p3.y;
+	}
+	//miny
+	if (p1.y <= p2.y && p1.y <= p3.y)
+	{
+		minY = p1.y;
+	}
+	if (p2.y <= p1.y && p2.y <= p3.y)
+	{
+		minY = p2.y;
+	}
+	if (p3.y <= p2.y && p3.y <= p1.y)
+	{
+		minY = p3.y;
+	}
+	int flag = 0, first_x = 0, last_x = 0;
+	for (int j = maxY; j >= minY; j--)
+	{
+		
+		for (int i = minX; i <= maxX; i++)
+		{
+			if (flag == 0)
+			{
+				if (this->color_buffer_[INDEX(viewport_width_, i, j, 0)] == color.x && this->color_buffer_[INDEX(viewport_width_, i, j, 1)] == color.y && this->color_buffer_[INDEX(viewport_width_, i, j, 2)] == color.z)
+				{
+					first_x = i;
+					flag = 1;
+				}
+				
+			}
+			if (flag == 1)
+			{
+				if (this->color_buffer_[INDEX(viewport_width_, i, j, 0)] == color.x && this->color_buffer_[INDEX(viewport_width_, i, j, 1)] == color.y && this->color_buffer_[INDEX(viewport_width_, i, j, 2)] == color.z)
+				{
+					last_x = i;
+					
+				}
+				
+			}
+		}
+		for (int fill = first_x; fill <= last_x; fill++)
+		{
+			PutPixel(fill, j, random_color);
+		}
+		flag = 0;
+	}
+	
+
+}
+
+
+float Renderer::Linear_interpolation_zdepth( const glm::vec4& p1, const glm::vec4& p2, int Zx, int  Zy)
+{
+	float disZX = Zx - p1.x;//x1;
+	float disZY = Zy - p1.y;//y1;
+	float disP1P2 = std::sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+	float alphaZ = (std::sqrt(disZX * disZX + disZY * disZY)) / disP1P2;
+
+	return alphaZ * p2.z + (1 - alphaZ) * p1.z;
 }
 

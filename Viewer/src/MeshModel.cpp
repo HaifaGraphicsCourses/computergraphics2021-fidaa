@@ -4,6 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
 MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4 T, float MAX, float maxX, float maxY, float maxZ, float minX, float minY, float minZ) :
 	faces_(faces),
 	vertices_(vertices),

@@ -13,6 +13,8 @@ public:
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;
 	int GetViewportHeight() const;
+	void TrianglswithColors(const glm::ivec2& p1, const glm::ivec2& p2, const glm::ivec2& p3, const glm::vec3& color);
+	float Linear_interpolation_zdepth(const glm::vec4& p1, const glm::vec4& p2, int Zx, int  Zy);
 	
 	
 private:
