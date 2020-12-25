@@ -13,8 +13,16 @@ public:
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;
 	int GetViewportHeight() const;
-	void TrianglswithColors(const glm::ivec2& p1, const glm::ivec2& p2, const glm::ivec2& p3, const glm::vec3& color);
-	float Linear_interpolation_zdepth(const glm::vec4& p1, const glm::vec4& p2, int Zx, int  Zy);
+	void Scan_andset_Zbuffer(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
+	void Set_ZBuffertoMax();
+	void Set_Z_value(int i, int j, float z);
+	float Get_Z_value(int i, int j);
+	float Calc_z(int x, int y, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
+	float Calc_area(int x1, int y1, float x2, float y2, float x3, float y3);
+	bool IsInsidetheTrianle( int x, int y,int x1, int y1, int x2, int y2, int x3, int y3);
+	glm::vec3 GetColor(float z);
+	void filltheTriangles();
+
 	
 	
 private:
@@ -30,4 +38,8 @@ private:
 	int viewport_height_;
 	GLuint gl_screen_tex_;
 	GLuint gl_screen_vtc_;
+	float maxbufferZ = std::numeric_limits<float>::min(); //
+	float minbufferZ = std::numeric_limits<float>::max();; //
+	float* z_buffer_;
+
 };

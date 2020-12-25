@@ -150,7 +150,7 @@ const glm::mat4x4 MeshModel::Get_transmatrix() const
 }
 void MeshModel::printmat() const
 {
-	std::cout << "\n ********* im Trans *********** \n";
+	
 	for (int j = 0; j < 4; j++)
 	{
 		for (int k = 0; k < 4; k++)

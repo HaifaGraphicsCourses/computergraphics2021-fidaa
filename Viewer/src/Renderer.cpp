@@ -40,8 +40,11 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 {
 	// TODO: Implement bresenham algorithm #################################################################
 	// 0 < a < 1
+
 	int dx = p2.x - p1.x;
 	int dy = p2.y - p1.y;
+	float z = 0;
+	
 	if (abs(dy) < abs(dx))
 	{
 		if (p1.x < p2.x)
@@ -62,7 +65,10 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 					y1 += yi;
 					e -= 2 * dx;
 				}
+				
 				PutPixel(x1, y1, color);
+				
+				
 				x1 += 1;
 				e += 2 * dy;
 
@@ -90,7 +96,10 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 					y2 += yi;
 					e -= 2 * dx;
 				}
-				PutPixel(x2, y2, color);
+				
+					PutPixel(x2, y2, color);
+				
+				
 				x2 += 1;
 				e += 2 * dy;
 
@@ -123,7 +132,10 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 					x1 += xi;
 					e -= 2 * dy;
 				}
-				PutPixel(x1, y1, color);
+				
+					PutPixel(x1, y1, color);
+				
+				
 				y1 += 1;
 				e += 2 * dx;
 
@@ -153,7 +165,10 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 					x2 += xi;
 					e -= 2 * dy;
 				}
-				PutPixel(x2, y2, color);
+				
+					PutPixel(x2, y2, color);
+				
+				
 				y2 += 1;
 				e += 2 * dx;
 
@@ -169,9 +184,14 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 
 void Renderer::CreateBuffers(int w, int h)
 {
+	
 	CreateOpenGLBuffer(); //Do not remove this line.
 	color_buffer_ = new float[3 * w * h];
 	ClearColorBuffer(glm::vec3(0.0f, 0.0f, 0.0f));
+	z_buffer_ = new float[w * h];
+	Set_ZBuffertoMax();
+	
+	
 }
 
 //##############################
@@ -315,13 +335,7 @@ void Renderer::Render(const Scene& scene)
 	glm::mat4x4 inverse, transmat, projection, st_view, lookat;
 	int r = 10, g = 10, b = 10;
 	float a = 1.0f / 255.0f;
-	//V0new= glm::vec4(100,200,300,1);
-	//V1new = glm::vec4(300, 700, 300, 1);
-	//V2new = glm::vec4(700, 400, 300, 1);
-	//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), c1);
-	//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V2new.x, V2new.y), c1);
-	//DrawLine(glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
-	//TrianglswithColors(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
+	
 	if (scene.GetModelCount())
 	{
 		auto model = scene.GetActiveModel();
@@ -329,7 +343,7 @@ void Renderer::Render(const Scene& scene)
 		inverse = scene.GetActiveCamera().Get_Invtransmatrix();
 		projection = scene.GetActiveCamera().GetProjectionTransformation();
 		lookat = scene.GetActiveCamera().Get_Lookat();
-		st_view = glm::scale(glm::vec3(half_width , half_height, 1)) * glm::translate(glm::vec3(1, 1, 0));
+		st_view = glm::scale(glm::vec3(half_width, half_height, 1)) * glm::translate(glm::vec3(1, 1, 1));
 			for (int i = 0; i < scene.GetActiveModel().GetFacesCount(); i++)   // #2
 			{
 				index0 = scene.GetActiveModel().GetFace(i).GetVertexIndex(0);
@@ -349,32 +363,20 @@ void Renderer::Render(const Scene& scene)
 					V0new /= V0new.w;
 					V1new /= V1new.w;
 					V2new /= V2new.w;
+					st_view = glm::scale(glm::vec3(half_width, half_height, 1)) * glm::translate(glm::vec3(1, 1, 0));
 				}
 				V0new = st_view * V0new;
 				V1new = st_view * V1new;
 				V2new = st_view * V2new;
-				DrawLine(glm::ivec2(V0new.x , V0new.y ), glm::ivec2(V1new.x , V1new.y ), c1);
-				DrawLine(glm::ivec2(V0new.x , V0new.y ), glm::ivec2(V2new.x , V2new.y ), c1);
-				DrawLine(glm::ivec2(V1new.x , V1new.y ), glm::ivec2(V2new.x , V2new.y ), c1);
-				TrianglswithColors(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
-				if (r >= 255)
-				{
-					r = 1;
-				}
-				else r + 10;
-				if (b >= 255)
-				{
-					b = 1;
-				}
-				else b + 10;
-				if (g >= 255)
-				{
-					g = 1;
-				}
-				else g + 10;
-				
-				
+				//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), c1);
+				//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V2new.x, V2new.y), c1);
+				//DrawLine(glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
+				Scan_andset_Zbuffer(glm::vec3(V0new.x, V0new.y, V0new.z), glm::vec3(V1new.x, V1new.y, V1new.z), glm::vec3(V2new.x, V2new.y, V2new.z));
+
 			}
+			
+			filltheTriangles();
+			
 			if (scene.GetActiveModel().Get_showbox())
 			{
 				maxX = scene.GetActiveModel().Get_maxX();
@@ -516,11 +518,12 @@ int Renderer::GetViewportHeight() const
 	return viewport_height_;
 }
 
-void Renderer::TrianglswithColors(const glm::ivec2& p1, const glm::ivec2& p2, const glm::ivec2& p3, const glm::vec3& color)
+void Renderer::Scan_andset_Zbuffer(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3)
 {
 	float maxX = 0, minX = 0, maxY = 0, minY = 0;
-	float temp = 255 * 255;
-	glm::vec3 random_color = glm::vec3(rand() / temp, rand() / temp, rand() / temp);
+	//float temp = 255 * 255;
+	
+	glm::vec3 _color = glm::vec3(0.1,0.5, 1);
 	if (p1.x >= p2.x && p1.x >= p3.x)
 	{
 		maxX = p1.x;
@@ -572,49 +575,118 @@ void Renderer::TrianglswithColors(const glm::ivec2& p1, const glm::ivec2& p2, co
 	{
 		minY = p3.y;
 	}
-	int flag = 0, first_x = 0, last_x = 0;
+	
 	for (int j = maxY; j >= minY; j--)
 	{
-		
 		for (int i = minX; i <= maxX; i++)
 		{
-			if (flag == 0)
+			if (IsInsidetheTrianle(i, j,p1.x, p1.y, p2.x, p2.y, p3.x, p3.y))
 			{
-				if (this->color_buffer_[INDEX(viewport_width_, i, j, 0)] == color.x && this->color_buffer_[INDEX(viewport_width_, i, j, 1)] == color.y && this->color_buffer_[INDEX(viewport_width_, i, j, 2)] == color.z)
+				float z= Calc_z(i, j, p1, p2, p3);
+				if (z <= Get_Z_value(i,j))
 				{
-					first_x = i;
-					flag = 1;
+					maxbufferZ = std::max(maxbufferZ, z);
+					minbufferZ = std::min(minbufferZ, z);
+					Set_Z_value(i, j, z);
 				}
-				
-			}
-			if (flag == 1)
-			{
-				if (this->color_buffer_[INDEX(viewport_width_, i, j, 0)] == color.x && this->color_buffer_[INDEX(viewport_width_, i, j, 1)] == color.y && this->color_buffer_[INDEX(viewport_width_, i, j, 2)] == color.z)
-				{
-					last_x = i;
-					
-				}
-				
 			}
 		}
-		for (int fill = first_x; fill <= last_x; fill++)
-		{
-			PutPixel(fill, j, random_color);
-		}
-		flag = 0;
+		
 	}
 	
-
 }
 
-
-float Renderer::Linear_interpolation_zdepth( const glm::vec4& p1, const glm::vec4& p2, int Zx, int  Zy)
+void Renderer::Set_ZBuffertoMax()
 {
-	float disZX = Zx - p1.x;//x1;
-	float disZY = Zy - p1.y;//y1;
-	float disP1P2 = std::sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
-	float alphaZ = (std::sqrt(disZX * disZX + disZY * disZY)) / disP1P2;
-
-	return alphaZ * p2.z + (1 - alphaZ) * p1.z;
+	minbufferZ = FLT_MAX;
+	maxbufferZ = FLT_MIN;
+	for (int i = 0; i < viewport_width_; i++)
+	{
+		for (int j = 0; j < viewport_height_; j++)
+		{
+			z_buffer_[Z_INDEX(viewport_width_, i, j)] = FLT_MAX;
+		}
+	}
 }
 
+float Renderer::Calc_z(int x, int y, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3)
+{
+	float A1 = Calc_area(x, y, p1.x, p1.y, p2.x, p2.y);
+    float A2 = Calc_area(x, y, p1.x, p1.y, p3.x, p3.y);
+	float A3 = Calc_area(x, y, p3.x, p3.y, p2.x, p2.y);
+	float A = A1 + A2 + A3;
+	float alpha = (A1 * p1.z) / A; 
+	float beta = (A2 * p2.z) / A;
+	float gamma = (A3 * p3.z) / A;
+	return (alpha + beta + gamma);
+}
+
+float Renderer::Calc_area(int x1, int y1, float x2, float y2, float x3, float y3)
+{
+	return abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0); //https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/
+}
+
+/* A function to check whether point P(x, y) lies inside the triangle formed
+   by A(x1, y1), B(x2, y2) and C(x3, y3) */ //https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/
+bool Renderer::IsInsidetheTrianle( int x, int y ,int x1, int y1, int x2, int y2, int x3, int y3)
+{
+	
+	
+	float A = Calc_area(x1, y1, x2, y2, x3, y3);
+
+	float A1 = Calc_area(x, y, x2, y2, x3, y3);
+
+	float A2 = Calc_area(x1, y1, x, y, x3, y3);
+
+
+	float A3 = Calc_area(x1, y1, x2, y2, x, y);
+
+	return (A == A1 + A2 + A3); 
+	
+}
+
+
+void Renderer::Set_Z_value(int i, int j, float z)
+{
+	if (i < 0) return; if (i >= viewport_width_) return;
+	if (j < 0) return; if (j >= viewport_height_) return;
+	 this->z_buffer_[Z_INDEX(viewport_width_, i , j)] = z;
+}
+
+float Renderer::Get_Z_value(int i, int j)
+{
+	if (i < 0) return 0; if (i >= viewport_width_) return 0;
+	if (j < 0) return 0; if (j >= viewport_height_) return 0;
+	return this->z_buffer_[Z_INDEX(viewport_width_, i, j)];
+}
+
+void Renderer::filltheTriangles()
+{
+	glm::vec3 _color;
+	float temp = 255 * 255;
+	glm::vec3 random_color = glm::vec3(rand() / temp, rand() / temp, rand() / temp);
+	for (int i = 0; i < viewport_width_; i++)
+	{
+		for (int j = 0; j < viewport_height_; j++)
+		{
+			float z = Get_Z_value(i, j);
+			if (z != FLT_MAX)
+			{
+				
+				  _color = GetColor(z);
+			      PutPixel(i, j, _color);
+			}
+
+		}
+	}
+
+}
+
+glm::vec3 Renderer::GetColor(float z)
+{
+	float a = 1 / (maxbufferZ - minbufferZ);
+    float b = -1 * a * minbufferZ;
+    float c = 1 - (a * z + b);
+    glm::vec3 _color(c, c, c);
+	 return _color;
+}

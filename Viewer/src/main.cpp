@@ -176,6 +176,7 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	renderer.Render(scene);
 	renderer.SwapBuffers();
 
+	renderer.Set_ZBuffertoMax();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	glfwMakeContextCurrent(window);
 	glfwSwapBuffers(window);
