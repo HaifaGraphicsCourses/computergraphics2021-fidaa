@@ -148,7 +148,7 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	{
 
 		glfwSetWindowAspectRatio(window, renderer.GetViewportWidth(), renderer.GetViewportHeight());
-		aspectratio = renderer.GetViewportWidth() / renderer.GetViewportHeight();
+		//aspectratio = renderer.GetViewportWidth() / renderer.GetViewportHeight();
 		
 
 	}
@@ -289,7 +289,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		int scale = 0, trans = 0, rotate = 0;
 		
-		ImGui::Begin("Model transformation");
+		ImGui::Begin("Model:");
 	    ImGui::ListBox("select\n", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items),2);
 		
 
@@ -570,8 +570,25 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				}
 			}
 			
-		
-
+			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.8f, 0.8f, 0.8f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.8f, 0.8f, 0.8f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.8f, 0.8f, 0.8f));
+			int c =ImGui::Button("model with colors");
+			ImGui::PopStyleColor(3);
+			if (c)
+			{
+				scene.GetActiveModel().Set_colorsvar(1);
+			}
+			ImGui::SameLine();
+			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.0f, 0.8f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 , 0.0f, 0.8f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 , 0, 0.8f));
+			int g = ImGui::Button("Gray model");
+			ImGui::PopStyleColor(3);
+			if (g)
+			{
+				scene.GetActiveModel().Set_colorsvar(0);
+			}
 		
 		ImGui::End();
 
@@ -832,8 +849,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			scene.GetActiveCamera().SetCameraLookAt();
 
 
-			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "aspect ratio =");
-			ImGui::Text(" %f",aspectratio);
+			//ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "aspect ratio =");
+			//ImGui::Text(" %f",aspectratio);
 			
 		
 		ImGui::End();

@@ -357,3 +357,13 @@ float MeshModel::Get_Zeye()
 	}
 	return eye_z;
 }
+
+
+void MeshModel::Set_colorsvar(int c)
+{
+	this->colors = c;
+}
+int MeshModel::Get_colorsvar() const
+{
+	return colors;
+}

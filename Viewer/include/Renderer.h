@@ -7,6 +7,7 @@ class Renderer
 {
 public:
 	Renderer(int viewportWidth, int viewportHeight);
+	
 	virtual ~Renderer();
 	void Render(const Scene& scene);
 	void SwapBuffers();
@@ -20,8 +21,10 @@ public:
 	float Calc_z(int x, int y, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
 	float Calc_area(int x1, int y1, float x2, float y2, float x3, float y3);
 	bool IsInsidetheTrianle( int x, int y,int x1, int y1, int x2, int y2, int x3, int y3);
-	glm::vec3 GetColor(float z);
+	glm::vec3 Get_GrayColor(float z);
 	void filltheTriangles();
+	void fillthewith_RandomColor(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
+	
 
 	
 	

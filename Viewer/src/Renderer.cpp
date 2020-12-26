@@ -371,11 +371,19 @@ void Renderer::Render(const Scene& scene)
 				//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), c1);
 				//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V2new.x, V2new.y), c1);
 				//DrawLine(glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
+				
 				Scan_andset_Zbuffer(glm::vec3(V0new.x, V0new.y, V0new.z), glm::vec3(V1new.x, V1new.y, V1new.z), glm::vec3(V2new.x, V2new.y, V2new.z));
-
+				if (scene.GetActiveModel().Get_colorsvar())
+				{
+					fillthewith_RandomColor(glm::vec3(V0new.x, V0new.y, V0new.z), glm::vec3(V1new.x, V1new.y, V1new.z), glm::vec3(V2new.x, V2new.y, V2new.z));
+				}
+			}
+			int c = scene.GetActiveModel().Get_colorsvar();
+			if (!scene.GetActiveModel().Get_colorsvar())
+			{
+				filltheTriangles();
 			}
 			
-			filltheTriangles();
 			
 			if (scene.GetActiveModel().Get_showbox())
 			{
@@ -520,10 +528,7 @@ int Renderer::GetViewportHeight() const
 
 void Renderer::Scan_andset_Zbuffer(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3)
 {
-	float maxX = 0, minX = 0, maxY = 0, minY = 0;
-	//float temp = 255 * 255;
-	
-	glm::vec3 _color = glm::vec3(0.1,0.5, 1);
+	/*glm::vec3 _color = glm::vec3(0.1,0.5, 1);
 	if (p1.x >= p2.x && p1.x >= p3.x)
 	{
 		maxX = p1.x;
@@ -575,7 +580,11 @@ void Renderer::Scan_andset_Zbuffer(const glm::vec3& p1, const glm::vec3& p2, con
 	{
 		minY = p3.y;
 	}
-	
+	*/
+	float minY = std::min(std::min(p1.y, p2.y), p3.y);
+	float maxY = std::max(std::max(p1.y, p2.y), p3.y);
+	float minX = std::min(std::min(p1.x, p2.x), p3.x);
+	float maxX = std::max(std::max(p1.x, p2.x), p3.x);
 	for (int j = maxY; j >= minY; j--)
 	{
 		for (int i = minX; i <= maxX; i++)
@@ -588,7 +597,9 @@ void Renderer::Scan_andset_Zbuffer(const glm::vec3& p1, const glm::vec3& p2, con
 					maxbufferZ = std::max(maxbufferZ, z);
 					minbufferZ = std::min(minbufferZ, z);
 					Set_Z_value(i, j, z);
+			       
 				}
+				
 			}
 		}
 		
@@ -663,8 +674,7 @@ float Renderer::Get_Z_value(int i, int j)
 void Renderer::filltheTriangles()
 {
 	glm::vec3 _color;
-	float temp = 255 * 255;
-	glm::vec3 random_color = glm::vec3(rand() / temp, rand() / temp, rand() / temp);
+	
 	for (int i = 0; i < viewport_width_; i++)
 	{
 		for (int j = 0; j < viewport_height_; j++)
@@ -673,8 +683,10 @@ void Renderer::filltheTriangles()
 			if (z != FLT_MAX)
 			{
 				
-				  _color = GetColor(z);
-			      PutPixel(i, j, _color);
+					_color = Get_GrayColor(z);
+					PutPixel(i, j, _color);
+				
+				
 			}
 
 		}
@@ -682,11 +694,35 @@ void Renderer::filltheTriangles()
 
 }
 
-glm::vec3 Renderer::GetColor(float z)
+glm::vec3 Renderer::Get_GrayColor(float z)
 {
 	float a = 1 / (maxbufferZ - minbufferZ);
     float b = -1 * a * minbufferZ;
     float c = 1 - (a * z + b);
     glm::vec3 _color(c, c, c);
 	 return _color;
+}
+void Renderer::fillthewith_RandomColor(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3)
+{
+	float minY = std::min(std::min(p1.y, p2.y), p3.y);
+	float maxY = std::max(std::max(p1.y, p2.y), p3.y);
+	float minX = std::min(std::min(p1.x, p2.x), p3.x);
+	float maxX = std::max(std::max(p1.x, p2.x), p3.x);
+	float temp = 255 * 255;
+	glm::vec3 random_color = glm::vec3(static_cast <float>(rand() / temp), static_cast <float>( rand() / temp), static_cast <float>( rand() / temp));
+	for (int j = maxY; j >= minY; j--)
+	{
+		for (int i = minX; i <= maxX; i++)
+		{
+			if (IsInsidetheTrianle(i, j, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y))
+			{
+				float z = Calc_z(i, j, p1, p2, p3);
+				if (z <= Get_Z_value(i, j))
+				{
+					PutPixel(i, j, random_color);
+				}
+
+			}
+		}
+	}
 }

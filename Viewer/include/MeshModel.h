@@ -46,6 +46,11 @@ public:
 	float Get_orthoGraphicVal();
 	float MeshModel::Get_Zeye();
 
+	void Set_colorsvar(int c);
+	int Get_colorsvar() const;
+
+
+
 private:
 	std::vector<Face> faces_;
 	std::vector<glm::vec3> vertices_;
@@ -72,4 +77,5 @@ private:
 	int showbox = 0;
 	int facenormals = 0;
 	int vernormals = 0;
+	int colors = 0;
 };
