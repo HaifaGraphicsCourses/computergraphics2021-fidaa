@@ -367,3 +367,27 @@ int MeshModel::Get_colorsvar() const
 {
 	return colors;
 }
+void MeshModel::Set_modelAmbient_Color(glm::vec3 color)
+{
+	Ambient_Color = color;
+}
+void MeshModel::Set_modelDiffuse_Color(glm::vec3 color)
+{
+	Diffuse_Color = color;
+}
+void MeshModel::Set_modelSpecular_Color(glm::vec3 color)
+{
+	Specular_Color = color;
+}
+ glm::vec3 MeshModel::Get_modelAmbient_Color() const
+{
+	return Ambient_Color;
+}
+ glm::vec3 MeshModel::Get_modelDiffuse_Color() const
+{
+	return Diffuse_Color;
+}
+ glm::vec3 MeshModel::Get_modelSpecular_Color() const
+{
+	return Specular_Color;
+}

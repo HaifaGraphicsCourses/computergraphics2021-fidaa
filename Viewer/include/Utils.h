@@ -3,6 +3,7 @@
 #include <string>
 #include "MeshModel.h"
 
+
 class Utils
 {
 public:
@@ -10,4 +11,4 @@ public:
 	static glm::vec2 Vec2fFromStream(std::istream& issLine);
 	static std::shared_ptr<MeshModel> LoadMeshModel(const std::string& filePath);
 	static std::string GetFileName(const std::string& filePath);
-};
+}; 

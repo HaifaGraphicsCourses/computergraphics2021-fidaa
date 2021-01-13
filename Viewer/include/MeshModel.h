@@ -37,6 +37,12 @@ public:
 	float Get_minX() const;
 	float Get_minY() const;
 	float Get_minZ() const;
+	void Set_modelAmbient_Color(glm::vec3 color);
+	void Set_modelDiffuse_Color(glm::vec3 color);
+	void Set_modelSpecular_Color(glm::vec3 color);
+	 glm::vec3 Get_modelAmbient_Color() const;
+	 glm::vec3 Get_modelDiffuse_Color() const;
+	 glm::vec3 Get_modelSpecular_Color() const;
 	
 	void Set_facenormals(int fn);
 	void Set_vernormals(int vn);
@@ -48,6 +54,7 @@ public:
 
 	void Set_colorsvar(int c);
 	int Get_colorsvar() const;
+
 
 
 
@@ -78,4 +85,7 @@ private:
 	int facenormals = 0;
 	int vernormals = 0;
 	int colors = 0;
+	glm::vec3 Ambient_Color;
+	glm::vec3 Diffuse_Color;
+	glm::vec3 Specular_Color;
 };

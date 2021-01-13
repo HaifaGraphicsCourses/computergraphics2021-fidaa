@@ -37,8 +37,11 @@ bool camera_rtxw = false, camera_rtyw = false, camera_rtzw = false;
 bool orthographic = true;
 bool look_at = false;
 static float aspectratio = 1920 / 1080;
+int LightType;
 
 
+bool Tm_light = false, Rm_light = false;
+bool Tw_light = false, Rw_light = false;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
 
 /**
@@ -317,8 +320,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float Sw_vec[3] = { 1.0f, 1.0f, 1.0f };//scale vector to the world, the vector contains x,y,z steps
 		
 	
-
-
+		static float ambientcolor_m[] = { 0 , 0 , 0 };
+		static float diffusecolor_m[] = { 0 , 0 , 0 };
+		static float specularcolor_m[] = { 0 , 0 , 0 };
+		ImGui::ColorEdit3("ambient color", ambientcolor_m);
+		ImGui::ColorEdit3("diffuse color", diffusecolor_m);
+		ImGui::ColorEdit3("specular color", specularcolor_m);
+		scene.GetActiveModel().Set_modelAmbient_Color(glm::vec3(ambientcolor_m[0], ambientcolor_m[1], ambientcolor_m[2]));
+		scene.GetActiveModel().Set_modelDiffuse_Color(glm::vec3(diffusecolor_m [0], diffusecolor_m [1], diffusecolor_m[2]));
+		scene.GetActiveModel().Set_modelSpecular_Color(glm::vec3(specularcolor_m[0], specularcolor_m[1], specularcolor_m[2]));
 		
 		if (listbox_item_current == 0) // local(model)
 		{
@@ -478,7 +488,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 			}
 			
-			
 
 		}
 		scene.GetActiveModel().Set_transmatrix();
@@ -625,12 +634,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float camera_lastay_w = 0.0f;
 		static float camera_az_w = 0.0f;
 		static float camera_lastaz_w = 0.0f;
-		
+
 		ImGui::Begin("Camera transformation");
 		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Projection\n");
 		ImGui::ListBox("select one projection", &camera_current_proj, Camera_listbox_proj, IM_ARRAYSIZE(Camera_listbox_proj), 2);
 
-		if (camera_current_proj==0)
+		if (camera_current_proj == 0)
 		{
 			if (scene.GetActiveModel().GetModelName() == "banana.obj")
 			{
@@ -638,7 +647,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			}
 			if (scene.GetActiveModel().GetModelName() == "beethoven.obj")
 			{
-				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f,100.0f);
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
 			if (scene.GetActiveModel().GetModelName() == "bishop.obj")
 			{
@@ -676,14 +685,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
-			            
 
-			scene.GetActiveCamera().Set_OrthoGraphic(1, ortho_val); 
+
+			scene.GetActiveCamera().Set_OrthoGraphic(1, ortho_val);
 		}
-		else if(camera_current_proj == 1)
+		else if (camera_current_proj == 1)
 		{
 			ImGui::SliderFloat("fovy", &fovy_m, 10, 180);
-			scene.GetActiveCamera().Set_Perspective(0,glm::radians(fovy_m));
+			scene.GetActiveCamera().Set_Perspective(0, glm::radians(fovy_m));
 
 		}
 
@@ -817,42 +826,307 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			}
 		}
 
-		
+
 
 		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Look at:\n");
-		
-			static float eye_vec[3] = { 0.0f, 0.0f, scene.GetActiveModel().Get_Zeye() };
-			static float at_vec[3] = { 0.0f, 0.0f, 0.0f };
-			static float up_vec[3] = { 0.0f, 1.0f, 0.0f };
-			
-			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Eye\n");
 
-			ImGui::InputFloat("X eye", &eye_vec[0]);
-			ImGui::InputFloat("Y eye", &eye_vec[1]);
-			ImGui::InputFloat("Z eye", &eye_vec[2]);
-			scene.GetActiveCamera().Set_Eye(eye_vec[0], eye_vec[1], eye_vec[2]);
-			scene.GetActiveCamera().SetCameraLookAt();
-			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "At\n");
+		static float eye_vec[3] = { 0.0f, 0.0f, scene.GetActiveModel().Get_Zeye() };
+		static float at_vec[3] = { 0.0f, 0.0f, 0.0f };
+		static float up_vec[3] = { 0.0f, 1.0f, 0.0f };
 
-			ImGui::InputFloat("X at", &at_vec[0]);
-			ImGui::InputFloat("Y at", &at_vec[1]);
-			ImGui::InputFloat("Z at", &at_vec[2]);
-			scene.GetActiveCamera().Set_At(at_vec[0], at_vec[1], at_vec[2]);
-			scene.GetActiveCamera().SetCameraLookAt();
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Eye\n");
 
-			ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Up\n");
+		ImGui::InputFloat("X eye", &eye_vec[0]);
+		ImGui::InputFloat("Y eye", &eye_vec[1]);
+		ImGui::InputFloat("Z eye", &eye_vec[2]);
+		scene.GetActiveCamera().Set_Eye(eye_vec[0], eye_vec[1], eye_vec[2]);
+		scene.GetActiveCamera().SetCameraLookAt();
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "At\n");
 
-			ImGui::InputFloat("X up", &up_vec[0]);
-			ImGui::InputFloat("Y up", &up_vec[1]);
-			ImGui::InputFloat("Z up", &up_vec[2]);
-			scene.GetActiveCamera().Set_Up(up_vec[0], up_vec[1], up_vec[2]);
-			scene.GetActiveCamera().SetCameraLookAt();
+		ImGui::InputFloat("X at", &at_vec[0]);
+		ImGui::InputFloat("Y at", &at_vec[1]);
+		ImGui::InputFloat("Z at", &at_vec[2]);
+		scene.GetActiveCamera().Set_At(at_vec[0], at_vec[1], at_vec[2]);
+		scene.GetActiveCamera().SetCameraLookAt();
+
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Up\n");
+
+		ImGui::InputFloat("X up", &up_vec[0]);
+		ImGui::InputFloat("Y up", &up_vec[1]);
+		ImGui::InputFloat("Z up", &up_vec[2]);
+		scene.GetActiveCamera().Set_Up(up_vec[0], up_vec[1], up_vec[2]);
+		scene.GetActiveCamera().SetCameraLookAt();
 
 
-			//ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "aspect ratio =");
-			//ImGui::Text(" %f",aspectratio);
-			
-		
+		//ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "aspect ratio =");
+		//ImGui::Text(" %f",aspectratio);
+
+
 		ImGui::End();
 	}
+	    ImGui::Begin("Light");
+		static int Type = 0;
+		static int counter = 0;
+		//std::shared_ptr<light> new_light;
+		static float ambientcolor[]= { 0 , 0 , 0};
+		static float diffusecolor[]= { 0 , 0 , 0};
+		static float specularcolor[]={ 0 , 0 , 0};
+		static float active_ambientcolor[] = { 0 , 0 , 0 };
+		static float active_diffusecolor[] = { 0 , 0 , 0 };
+		static float active_specularcolor[] = { 0 , 0 , 0 };
+		
+		 //char* light_sources_list;
+		//static int camera_current_proj = 0;
+
+	    ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Add light source:\n");
+		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Type:\n");
+		ImGui::RadioButton("Parallel", &LightType, 0);
+
+		ImGui::SameLine();
+		ImGui::RadioButton("Point", &LightType, 1);
+
+		ImGui::ColorEdit3("ambient color", ambientcolor);
+		ImGui::ColorEdit3("diffuse color", diffusecolor);
+		ImGui::ColorEdit3("specular color", specularcolor);
+		//ImGui::ColorEdit3("Clear Color", (float*)&clear_color);
+		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(3 / 7.0f, 0.6f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3/ 7.0f, 0.7f, 0.7f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
+		static std::vector <bool> lights;
+		if (ImGui::Button("ADD"))
+		{
+			counter++;
+			std::shared_ptr<light>& new_light = std::make_shared<light>();
+			(*new_light).Set_Ambient_Color(glm::vec3(ambientcolor[0], ambientcolor[1], ambientcolor[2]));
+			(*new_light).Set_Diffuse_Color(glm::vec3(diffusecolor[0], diffusecolor[1], diffusecolor[2]));
+			(*new_light).Set_Specular_Color(glm::vec3(specularcolor[0], specularcolor[1], specularcolor[2]));
+			(*new_light).Set_Type(LightType + 1);
+			scene.AddLight(new_light);
+			scene.SetActiveLightIndex(0);
+			lights.push_back(0);
+			//std::make_shared<light>((float*)&ambientcolor, (float*)&diffusecolor, (float*)&specularcolor)
+		}
+		ImGui::PopStyleColor(3);
+		static int flag = 0;
+		
+		if (ImGui::ListBoxHeader("##", counter, 3))
+		{
+			for (int n = 0; n < counter; n++)
+			{
+				char label[32];  sprintf(label, "light %d", n);
+
+				if (ImGui::Selectable(label, lights[n]))
+				{
+					lights[n] = 1;
+					scene.SetActiveLightIndex(n);
+					flag = 1;
+					
+				}
+			}
+			for (int n = 0; n < counter; n++)
+			{
+				if(!(scene.GetActiveLightIndex()==n))
+					lights[n] = 0;
+			}
+			ImGui::ListBoxFooter();
+		}
+
+		ImGui::Text( "Control active light:\n");
+		ImGui::ColorEdit3("active ambient color", active_ambientcolor);
+		ImGui::ColorEdit3("active diffuse color", active_diffusecolor);
+		ImGui::ColorEdit3("active specular color", active_specularcolor);
+		if (scene.Get_count_oflights())
+		{
+			scene.GetActivelight().Set_Ambient_Color(glm::vec3(active_ambientcolor[0], active_ambientcolor[1], active_ambientcolor[2]));
+			scene.GetActivelight().Set_Diffuse_Color(glm::vec3(active_diffusecolor[0], active_diffusecolor[1], active_diffusecolor[2]));
+			scene.GetActivelight().Set_Specular_Color(glm::vec3(active_specularcolor[0], active_specularcolor[1], active_specularcolor[2]));
+			static float alpha = 5;
+			ImGui::SliderFloat("alpha", &alpha, 1.0f, 10.0f);
+			scene.GetActivelight().Set_alpha(alpha);
+
+			if (scene.GetActivelight().Get_Type() == 1)
+			{
+				ImGui::Text("Light direction\n");
+
+				static bool inputs_step = true;
+				static float  f32_v = 0.123f;
+				const float    f32_one = 1.f;
+				ImGui::Checkbox("Show step buttons", &inputs_step);
+				ImGui::InputScalar("X", ImGuiDataType_Float, &f32_v, inputs_step ? &f32_one : NULL);
+				ImGui::InputScalar("Y", ImGuiDataType_Float, &f32_v, inputs_step ? &f32_one : NULL);
+				ImGui::InputScalar("Z", ImGuiDataType_Float, &f32_v, inputs_step ? &f32_one : NULL);
+			}
+			else
+			{
+				ImGui::Text("Transformations \n");
+
+
+				const char* listbox_lightTrans[] = { "local transformation","world transformation" };
+				const char* listbox_lightrotations[] = { "rotate around x","rotate around y","rotate around z" };
+				static int listbox_light_current = 0;
+				static int current_lightrotation = 0;
+
+
+				//static float anglem = 0.0f;
+				static float ax_m_light = 0.0f;
+				static float lastax_m_light = 0.0f;
+				static float ay_m_light = 0.0f;
+				static float lastay_m_light = 0.0f;
+				static float az_m_light = 0.0f;
+				static float lastaz_m_light = 0.0f;
+
+
+				static float anglew_light = 0.0f;
+				static float ax_w_light = 0.0f;
+				static float lastax_w_light = 0.0f;
+				static float ay_w_light = 0.0f;
+				static float lastay_w_light = 0.0f;
+				static float az_w_light = 0.0f;
+				static float lastaz_w_light = 0.0f;
+
+
+				static float Tm_vec_light[3] = { 0.0f, 0.0f, 0.0f }; //translate vector to the modle, the vector contains x,y,z steps
+				static float Tw_vec_light[3] = { 0.0f, 0.0f, 0.0f }; //translate vector to the world, the vector contains x,y,z steps
+				static float Sm_vec_light[3] = { 1.0f, 1.0f, 1.0f }; //scale vector to the modle, the vector contains x,y,z steps
+				static float Sw_vec_light[3] = { 1.0f, 1.0f, 1.0f };//scale vector to the world, the vector contains x,y,z steps
+
+
+
+				ImGui::ListBox("select\n", &listbox_light_current, listbox_lightTrans, IM_ARRAYSIZE(listbox_lightTrans), 2);
+				if (counter != 0 && flag)
+				{
+					if (listbox_light_current == 0) // local(model)
+					{
+
+						ImGui::Checkbox("translation", &Tm_light);
+						if (Tm_light)
+						{
+
+							ImGui::InputFloat("tranlation x steps", &Tm_vec_light[0]);
+							ImGui::InputFloat("tranlation y steps", &Tm_vec_light[1]);
+							ImGui::InputFloat("tranlation z steps", &Tm_vec_light[2]);
+							scene.GetActivelight().Set_Tm_mat(glm::translate(glm::vec3(Tm_vec_light[0], Tm_vec_light[1], Tm_vec_light[2])));
+							scene.GetActivelight().Set_transmatrix();
+
+						}
+						ImGui::Checkbox("Rotation", &Rm_light);
+						if (Rm_light)
+						{
+							ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "select any rotation:\n");
+							ImGui::ListBox("", &current_lightrotation, listbox_lightrotations, IM_ARRAYSIZE(listbox_lightrotations), 3);
+
+							ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "set the angle:\n");
+
+							if (current_lightrotation == 0) //around x
+							{
+								ImGui::SliderAngle("slider angle", &ax_m_light, -360, 360);
+
+								if (lastax_m_light != ax_m_light)
+								{
+									lastax_m_light = ax_m_light;
+									scene.GetActivelight().Set_Rm_mat(glm::rotate(ax_m_light, glm::vec3(1, 0, 0)), 0);
+									scene.GetActivelight().Set_transmatrix();
+								}
+
+
+
+							}
+							if (current_lightrotation == 1)// around y
+							{
+								ImGui::SliderAngle("slider angle", &ay_m_light, -360, 360);
+								if (lastay_m_light != ay_m_light)
+								{
+									lastay_m_light = ay_m_light;
+									scene.GetActivelight().Set_Rm_mat(glm::rotate(ay_m_light, glm::vec3(0, 1, 0)), 1);
+									scene.GetActivelight().Set_transmatrix();
+								}
+							}
+							if (current_lightrotation == 2) // around z
+							{
+								ImGui::SliderAngle("slider angle", &az_m_light, -360, 360);
+
+								if (lastaz_m_light != az_m_light)
+								{
+									lastaz_m_light = az_m_light;
+									scene.GetActivelight().Set_Rm_mat(glm::rotate(az_m_light, glm::vec3(0, 0, 1)), 2);
+									scene.GetActivelight().Set_transmatrix();
+								}
+
+
+							}
+
+						}
+
+
+
+					}
+					else //world
+					{
+
+
+						ImGui::Checkbox("translation", &Tw_light);
+						if (Tw_light)
+						{
+
+							ImGui::InputFloat("tranlation x steps", &Tw_vec_light[0]);
+							ImGui::InputFloat("tranlation y steps", &Tw_vec_light[1]);
+							ImGui::InputFloat("tranlation z steps", &Tw_vec_light[2]);
+
+							scene.GetActivelight().Set_Tw_mat(glm::translate(glm::vec3(Tw_vec_light[0], Tw_vec_light[1], Tw_vec_light[2])));
+							scene.GetActivelight().Set_transmatrix();
+						}
+						ImGui::Checkbox("Rotation", &Rw_light);
+						if (Rw_light)
+						{
+
+							ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "select any rotation:\n");
+							ImGui::ListBox("", &current_lightrotation, listbox_lightrotations, IM_ARRAYSIZE(listbox_lightrotations), 3);
+
+							ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "set the angle:\n");
+
+							if (current_lightrotation == 0)
+							{
+								ImGui::SliderAngle("slider angle", &ax_w_light, -360, 360);
+
+								if (lastax_w_light != ax_w_light)
+								{
+									lastax_w_light = ax_w_light;
+									scene.GetActivelight().Set_Rm_mat(glm::rotate(ax_w_light, glm::vec3(1, 0, 0)), 0);
+									scene.GetActivelight().Set_transmatrix();
+								}
+
+
+
+							}
+							if (current_lightrotation == 1)
+							{
+								ImGui::SliderAngle("slider angle", &ay_w_light, -360, 360);
+								if (lastay_w_light != ay_w_light)
+								{
+									lastay_w_light = ay_w_light;
+									scene.GetActivelight().Set_Rm_mat(glm::rotate(ay_w_light, glm::vec3(0, 1, 0)), 1);
+									scene.GetActivelight().Set_transmatrix();
+								}
+							}
+							if (current_lightrotation == 2)
+							{
+								ImGui::SliderAngle("slider angle", &az_w_light, -360, 360);
+
+								if (lastaz_w_light != az_w_light)
+								{
+									lastaz_w_light = az_w_light;
+									scene.GetActivelight().Set_Rm_mat(glm::rotate(az_w_light, glm::vec3(0, 0, 1)), 2);
+									scene.GetActivelight().Set_transmatrix();
+								}
+
+
+							}
+
+						}
+
+					}
+					scene.GetActivelight().Set_transmatrix();
+				}
+			}
+		}
 }
