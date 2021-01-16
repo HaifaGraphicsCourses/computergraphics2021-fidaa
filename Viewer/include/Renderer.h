@@ -18,13 +18,15 @@ public:
 	void Set_ZBuffertoMax();
 	void Set_Z_value(int i, int j, float z);
 	float Get_Z_value(int i, int j);
-	float Calc_z(int x, int y, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
+	glm::vec3 Calc_z(int x, int y, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& val1, const glm::vec3& val2, const glm::vec3& val3);
 	float Calc_area(int x1, int y1, float x2, float y2, float x3, float y3);
 	bool IsInsidetheTrianle( int x, int y,int x1, int y1, int x2, int y2, int x3, int y3);
 	glm::vec3 Get_GrayColor(float z);
 	void filltheTriangles();
 	void fillthewith_RandomColor(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
 	
+	void DrawLights(const Scene& scene, glm::mat4x4& inverse, glm::mat4x4& lookat, glm::mat4x4& projection, glm::mat4x4& st_view);
+	glm::vec3 Ambient_color(glm::vec3& light, glm::vec3& model);
 
 	
 	

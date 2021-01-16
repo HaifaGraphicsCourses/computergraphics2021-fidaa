@@ -24,6 +24,7 @@ Renderer::Renderer(int viewport_width, int viewport_height) :
 Renderer::~Renderer()
 {
 	delete[] color_buffer_;
+	delete[] z_buffer_;
 }
 
 void Renderer::PutPixel(int i, int j, const glm::vec3& color)
@@ -322,12 +323,13 @@ void Renderer::Render(const Scene& scene)
 {
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
-
+	glm::vec3 color;
 	
 
-	 glm::ivec3 c1(0, 0,1);
+	 //glm::ivec3 c1(0, 0,1);
 	int index0, index1, index2;
 	glm::vec3 v0, v1, v2;
+	glm::vec3 c0, c1, c2;
 
 	glm::vec4 V0new, V1new, V2new;
 	glm::vec4 UpL1, UpL2, UpR1, UpR2, DnL1, DnL2, DnR1, DnR2;
@@ -336,10 +338,10 @@ void Renderer::Render(const Scene& scene)
 	int r = 10, g = 10, b = 10;
 	float a = 1.0f / 255.0f;
 	
+	Set_ZBuffertoMax();
 	if (scene.GetModelCount())
 	{
 		auto model = scene.GetActiveModel();
-		
 		inverse = scene.GetActiveCamera().Get_Invtransmatrix();
 		projection = scene.GetActiveCamera().GetProjectionTransformation();
 		lookat = scene.GetActiveCamera().Get_Lookat();
@@ -368,15 +370,18 @@ void Renderer::Render(const Scene& scene)
 				V0new = st_view * V0new;
 				V1new = st_view * V1new;
 				V2new = st_view * V2new;
-				//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V1new.x, V1new.y), c1);
-				//DrawLine(glm::ivec2(V0new.x, V0new.y), glm::ivec2(V2new.x, V2new.y), c1);
-				//DrawLine(glm::ivec2(V1new.x, V1new.y), glm::ivec2(V2new.x, V2new.y), c1);
+				
 				
 				Scan_andset_Zbuffer(glm::vec3(V0new.x, V0new.y, V0new.z), glm::vec3(V1new.x, V1new.y, V1new.z), glm::vec3(V2new.x, V2new.y, V2new.z));
 				if (scene.GetActiveModel().Get_colorsvar())
 				{
 					fillthewith_RandomColor(glm::vec3(V0new.x, V0new.y, V0new.z), glm::vec3(V1new.x, V1new.y, V1new.z), glm::vec3(V2new.x, V2new.y, V2new.z));
 				}
+				
+			}
+			if (scene.Get_count_oflights() != 0)
+			{
+				DrawLights(scene, inverse, lookat, projection, st_view);
 			}
 			int c = scene.GetActiveModel().Get_colorsvar();
 			if (!scene.GetActiveModel().Get_colorsvar())
@@ -594,9 +599,9 @@ void Renderer::Scan_andset_Zbuffer(const glm::vec3& p1, const glm::vec3& p2, con
 				float z= Calc_z(i, j, p1, p2, p3);
 				if (z <= Get_Z_value(i,j))
 				{
-					maxbufferZ = std::max(maxbufferZ, z);
-					minbufferZ = std::min(minbufferZ, z);
-					Set_Z_value(i, j, z);
+					maxbufferZ = std::max(maxbufferZ, z.z);
+					minbufferZ = std::min(minbufferZ, z.z);
+					Set_Z_value(i, j, z.z);
 			       
 				}
 				
@@ -616,19 +621,23 @@ void Renderer::Set_ZBuffertoMax()
 		for (int j = 0; j < viewport_height_; j++)
 		{
 			z_buffer_[Z_INDEX(viewport_width_, i, j)] = FLT_MAX;
+
+			color_buffer_[INDEX(viewport_width_, i, j, 0)] = 0.f;
+			color_buffer_[INDEX(viewport_width_, i, j, 1)] = 0.f;
+			color_buffer_[INDEX(viewport_width_, i, j, 2)] = 0.f;
 		}
 	}
 }
 
-float Renderer::Calc_z(int x, int y, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3)
+glm::vec3 Renderer::Calc_z(int x, int y, const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& val1, const glm::vec3& val2, const glm::vec3& val3)
 {
 	float A1 = Calc_area(x, y, p1.x, p1.y, p2.x, p2.y);
     float A2 = Calc_area(x, y, p1.x, p1.y, p3.x, p3.y);
 	float A3 = Calc_area(x, y, p3.x, p3.y, p2.x, p2.y);
 	float A = A1 + A2 + A3;
-	float alpha = (A1 * p1.z) / A; 
-	float beta = (A2 * p2.z) / A;
-	float gamma = (A3 * p3.z) / A;
+	glm::vec3 alpha = (A1 / A) * val3 ;
+	glm::vec3 beta = (A2 / A )* val2;
+	glm::vec3 gamma = (A3 / A) * val1;
 	return (alpha + beta + gamma);
 }
 
@@ -716,8 +725,8 @@ void Renderer::fillthewith_RandomColor(const glm::vec3& p1, const glm::vec3& p2,
 		{
 			if (IsInsidetheTrianle(i, j, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y))
 			{
-				float z = Calc_z(i, j, p1, p2, p3);
-				if (z <= Get_Z_value(i, j))
+				glm::vec3 z = Calc_z(i, j, p1, p2, p3,p1,p2,p3);
+				if (z.z <= Get_Z_value(i, j))
 				{
 					PutPixel(i, j, random_color);
 				}
@@ -725,4 +734,60 @@ void Renderer::fillthewith_RandomColor(const glm::vec3& p1, const glm::vec3& p2,
 			}
 		}
 	}
+}
+
+void Renderer::DrawLights(const Scene& scene, glm::mat4x4& inverse, glm::mat4x4& lookat, glm::mat4x4& projection, glm::mat4x4& st_view)
+{
+	int count = scene.Get_count_oflights();
+	glm::mat4x4 transmat;
+
+	for (int i = 0; i < count; i++)
+	{
+		int t = scene.GetLight(i).Get_Type();
+		if (t == 2) //point
+		{
+			transmat = scene.GetLight(i).Get_transmatrix();
+
+			glm::vec4 pos = projection * lookat * inverse * transmat * scene.GetLight(i).Get_Position();
+			if (!(scene.GetActiveCamera().Get_OrthoGraphic()))
+			{
+				pos /= pos.w;
+			}
+			pos = st_view * pos;
+			glm::vec3 v1_light(pos.x, pos.y + 20, -pos.z);
+			glm::vec3 v2_light(pos.x + 20, pos.y -20, -pos.z);
+			glm::vec3 v3_light(pos.x - 20, pos.y - 20, -pos.z);
+			float minY = std::min(std::min(v1_light.y, v2_light.y), v3_light.y);
+			float maxY = std::max(std::max(v1_light.y, v2_light.y), v3_light.y);
+			float minX = std::min(std::min(v1_light.x, v2_light.x), v3_light.x);
+			float maxX = std::max(std::max(v1_light.x, v2_light.x), v3_light.x);
+
+			glm::vec3 white_color = glm::vec3(1, 1, 1);
+			for (int j = maxY; j >= minY; j--)
+			{
+				for (int i = minX; i <= maxX; i++)
+				{
+					if (IsInsidetheTrianle(i, j, v1_light.x, v1_light.y, v2_light.x, v2_light.y, v3_light.x, v3_light.y))
+					{
+						glm::vec3 z = Calc_z(i, j, v1_light, v2_light, v3_light, v1_light, v2_light, v3_light);
+						if (z.z <= Get_Z_value(i, j))
+						{
+							PutPixel(i, j, white_color);
+							Set_Z_value(i, j, z.z);
+						}
+
+					}
+				}
+			}
+
+		}
+	}
+
+}
+
+glm::vec3 Renderer::Ambient_color(glm::vec3& light, glm::vec3& model)
+{
+	return glm::vec3(light.x * model.x, light.y * model.y, light.z * model.z);
+}
+
 }
