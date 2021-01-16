@@ -20,7 +20,7 @@ public:
 	void Set_Eye(float x,float y,float z);
 	void Set_At(float x, float y, float z);
 	void Set_Up(float x, float y, float z);
-	
+	glm::vec3 Get_Eye() const;
 	const glm::mat4x4 Get_Lookat()const;
 	const glm::mat4x4 Get_Invtransmatrix()const ;
 	void Set_OrthoGraphic(int OG, float ortho_val);

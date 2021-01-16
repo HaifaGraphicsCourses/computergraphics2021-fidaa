@@ -135,3 +135,7 @@ void Camera::Set_Perspective(int OG, float persp_val)
 	projection_transformation_ = glm::perspective(fovy, aspectrat, p_near, p_far);
 	
 }
+glm::vec3 Camera::Get_Eye() const
+{
+	return eye_vec;
+}

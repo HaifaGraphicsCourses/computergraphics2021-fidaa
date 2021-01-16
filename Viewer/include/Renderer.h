@@ -29,6 +29,10 @@ public:
 	glm::vec3 Ambient_color(glm::vec3& light, glm::vec3& model);
 	glm::vec3 Diffuse_Color(glm::vec3 n, glm::vec3& i, glm::vec3& color, light& light);
 	glm::vec3 Specular_Color(glm::vec3& n, glm::vec3& i, glm::vec3& v, glm::vec3& color, light& light);
+	void filltheTriangle_Flat(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, glm::vec3 color);
+	void filltheTriangle_gouraud(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, glm::vec3& c1, glm::vec3& c2, glm::vec3& c3);
+	void filltheTriangle_phong(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, glm::vec3 n1, glm::vec3 n2, glm::vec3 n3,const Scene& scene, light& light, glm::vec3 position, int flag);
+
 
 	
 	
