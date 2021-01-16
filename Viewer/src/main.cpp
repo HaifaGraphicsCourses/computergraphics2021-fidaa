@@ -1129,4 +1129,13 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				}
 			}
 		}
+		static int shadingtype = 0;
+		ImGui::RadioButton("flat", &shadingtype,0);
+		ImGui::RadioButton("gouraud", &shadingtype,1);
+		ImGui::RadioButton("phong", &shadingtype,2);
+		scene.Setshading(shadingtype);
+
+	    ImGui::End();
+	
+
 }

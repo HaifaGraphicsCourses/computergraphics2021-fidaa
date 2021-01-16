@@ -790,4 +790,21 @@ glm::vec3 Renderer::Ambient_color(glm::vec3& light, glm::vec3& model)
 	return glm::vec3(light.x * model.x, light.y * model.y, light.z * model.z);
 }
 
+glm::vec3 Renderer::Diffuse_Color(glm::vec3 n, glm::vec3& i , glm::vec3& color, light& light) 
+{
+	glm::vec3 Lcolor = light.Get_Diffuse_Color();
+	glm::vec3 Color(Lcolor.x * color.x, Lcolor.y * color.y, Lcolor.z * color.z);
+	float I_n = glm::dot(-n, i);
+	return Color * I_n;
+}
+glm::vec3 Renderer::Specular_Color(glm::vec3& n, glm::vec3& i, glm::vec3& v,glm::vec3& color, light& light)
+{
+	int alpha = light.Get_alpha();
+	glm::vec3 Lcolor = light.Get_Specular_Color();
+	glm::vec3 Color(Lcolor.x * color.x, Lcolor.y * color.y, Lcolor.z * color.z);
+	glm::vec3 r = (2.f * glm::dot(-n, i) * n - i);
+	float t = std::pow(std::max(0.f, glm::dot(r, v)), alpha); //
+	return t * Color;
+}
+
 }

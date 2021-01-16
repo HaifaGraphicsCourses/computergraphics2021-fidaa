@@ -27,6 +27,8 @@ public:
 	
 	void DrawLights(const Scene& scene, glm::mat4x4& inverse, glm::mat4x4& lookat, glm::mat4x4& projection, glm::mat4x4& st_view);
 	glm::vec3 Ambient_color(glm::vec3& light, glm::vec3& model);
+	glm::vec3 Diffuse_Color(glm::vec3 n, glm::vec3& i, glm::vec3& color, light& light);
+	glm::vec3 Specular_Color(glm::vec3& n, glm::vec3& i, glm::vec3& v, glm::vec3& color, light& light);
 
 	
 	
