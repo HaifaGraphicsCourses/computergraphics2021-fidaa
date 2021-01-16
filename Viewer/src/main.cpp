@@ -39,7 +39,6 @@ bool look_at = false;
 static float aspectratio = 1920 / 1080;
 int LightType;
 
-
 bool Tm_light = false, Rm_light = false;
 bool Tw_light = false, Rw_light = false;
 glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
