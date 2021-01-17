@@ -21,8 +21,9 @@ public:
 	 glm::vec3 Get_Ambient_Color() const;
 	 glm::vec3 Get_Diffuse_Color() const;
 	 glm::vec3 Get_Specular_Color() const;
+	 glm::vec3 Get_parallel() const;
 
-	const glm::vec3 Get_Direction() const;
+	 glm::vec3 Get_Direction() const;
 	const glm::vec4 Get_Position() const;
 	const int Get_Type() const;
 
@@ -41,6 +42,7 @@ private:
 
 	glm::vec3 Direction;
 	glm::vec4 Position = glm::vec4(0,0, 0 ,1);
+	glm::vec3 parallel = glm::vec3(1300, 300, 1);
 	
 	int Type; // 1 (Parallel) , 2 (Point) , 3 (Ambient)
 
@@ -56,5 +58,6 @@ private:
 	glm::mat4x4 Rm_y = glm::mat4(1.0f);
 	glm::mat4x4 Rm_z = glm::mat4(1.0f);
 	glm::mat4x4 transmatrix = glm::mat4(1.0f);
+
 };
 

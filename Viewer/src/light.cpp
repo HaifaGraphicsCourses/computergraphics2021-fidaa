@@ -54,8 +54,7 @@ void light::Set_Type(int type)
 {
 	return this->Specular_Color;
 }
-
-const glm::vec3 light::Get_Direction() const
+ glm::vec3 light::Get_Direction() const
 {
 	return this->Direction;
 }
@@ -137,4 +136,9 @@ const float light::Get_alpha() const
 void light::Set_alpha(float a)
 {
 	alpha = a;
+}
+
+glm::vec3 light::Get_parallel() const
+{
+	return parallel;
 }

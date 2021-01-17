@@ -890,6 +890,18 @@ void Renderer::DrawLights(const Scene& scene, glm::mat4x4& inverse, glm::mat4x4&
 			}
 
 		}
+
+		else
+		{
+			transmat = scene.GetLight(i).Get_transmatrix();
+			glm::vec4 p = glm::vec4(scene.GetLight(i).Get_parallel(), 1);
+			glm::vec4 direction = glm::vec4(normalize(scene.GetLight(i).Get_Direction()), 1);
+			direction = transmat * direction;
+			direction = glm::scale(glm::vec3(80, 80, 80)) * direction + p;
+			DrawLine(glm::vec2(p.x,p.y), glm::vec2(direction.x, direction.y), glm::vec3(1, 1, 1));
+			DrawLine(glm::vec2(p.x +10,p.y), glm::vec2(direction.x +10, direction.y), glm::vec3(1, 1, 1));
+			
+		}
 	}
 
 }

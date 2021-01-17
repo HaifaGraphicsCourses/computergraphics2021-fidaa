@@ -948,14 +948,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::Text("Light direction\n");
 
 				static bool inputs_step = true;
-				static float  f1_v = 0.0f;
-				static float  f2_v = 0.0f;
-				static float  f3_v = 0.0f;
+				static float  f1_v = 1.0f;
+				static float  f2_v = 1.0f;
+				static float  f3_v = -1.0f;
 				const float    f32_one = 1.f;
 				ImGui::Checkbox("Show step buttons", &inputs_step);
 				ImGui::InputScalar("X", ImGuiDataType_Float, &f1_v, inputs_step ? &f32_one : NULL);
 				ImGui::InputScalar("Y", ImGuiDataType_Float, &f2_v, inputs_step ? &f32_one : NULL);
 				ImGui::InputScalar("Z", ImGuiDataType_Float, &f3_v, inputs_step ? &f32_one : NULL);
+				scene.GetActivelight().Set_Direction(glm::vec3(f1_v, f2_v, f3_v));
 			}
 			else
 			{
