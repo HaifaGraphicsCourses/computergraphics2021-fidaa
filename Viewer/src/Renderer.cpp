@@ -492,12 +492,13 @@ void Renderer::Render(const Scene& scene)
 			}
 
 			int c = scene.GetActiveModel().Get_colorsvar();
-		/*	if (!scene.GetActiveModel().Get_colorsvar())
+			if (!scene.GetActiveModel().Get_colorsvar())
 			{
 				filltheTriangles();
 			}
-			*/
 			
+			if (scene.getfog() !=0)
+				Fogfunc(scene);
 			if (scene.GetActiveModel().Get_showbox())
 			{
 				maxX = scene.GetActiveModel().Get_maxX();
@@ -1064,7 +1065,7 @@ void Renderer::filltheTriangle_gouraud(const glm::vec3& p1, const glm::vec3& p2,
 		}
 
 	}
-}}
+}
 
 
 
