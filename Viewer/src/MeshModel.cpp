@@ -263,6 +263,10 @@ float MeshModel::Get_orthoGraphicVal()
 	{
 		ortho_val = 0.5f;
 	}
+	if (model_name_ == "Sphere.obj")
+	{
+		ortho_val = 0.5f;
+	}
 	if (model_name_ == "beethoven.obj")
 	{
 		ortho_val = 25.0f;
@@ -311,6 +315,10 @@ float MeshModel::Get_orthoGraphicVal()
 float MeshModel::Get_Zeye()
 {
 	float eye_z = 0;
+	if (model_name_ == "Sphere.obj")
+	{
+		eye_z = 0.5f;
+	}
 	if (model_name_ == "banana.obj")
 	{
 		eye_z = 0.5f;

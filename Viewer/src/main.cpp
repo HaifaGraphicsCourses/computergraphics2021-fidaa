@@ -702,6 +702,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
 
+			if (scene.GetActiveModel().GetModelName() == "Sphere.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
+			}
+
 
 			scene.GetActiveCamera().Set_OrthoGraphic(1, ortho_val);
 		}
