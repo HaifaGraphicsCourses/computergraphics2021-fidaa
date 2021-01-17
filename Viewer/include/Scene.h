@@ -35,6 +35,10 @@ public:
 	light& GetLight(int index) const;
 	int GetshadingLight() const;
 	void Setshading(int index);
+	void Setfog(int index);
+	void SetFogDensity(int index);
+	int getfog() const;
+	int getFogDensity() const;
 	
 private:
 	std::vector<std::shared_ptr<MeshModel>> mesh_models_;
@@ -46,4 +50,6 @@ private:
 	int active_light_index_;
 	int shading = 0;
 	int count_oflights = 0;
+	int fog = 0; // 0 linear , 1 e
+	float FogDensity = 5;
 };

@@ -109,3 +109,24 @@ void Scene::Setshading(int index)
 {
 	shading = index;
 }
+
+void Scene::Setfog(int index)
+{
+	fog = index;
+}
+
+int  Scene::getfog() const
+{
+	return fog;
+}
+
+void Scene::SetFogDensity(int index)
+{
+	FogDensity = index;
+}
+
+
+int  Scene::getFogDensity() const
+{
+	return this->FogDensity;
+}
