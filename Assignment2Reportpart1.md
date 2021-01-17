@@ -23,7 +23,9 @@ after implement the z-buffer algorithm:
 
 
 ![gray_bishop](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/grybishop.png)
+![randombishop](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/randombishop.png)
 ![rotate_graybishop](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/bishop_afterrotate.png)
+![randombishop_afterrotate](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/randombishop_afterrotate.png)
 
 
 Thank U.
