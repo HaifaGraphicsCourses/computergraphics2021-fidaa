@@ -492,10 +492,10 @@ void Renderer::Render(const Scene& scene)
 			}
 
 			int c = scene.GetActiveModel().Get_colorsvar();
-			if (!scene.GetActiveModel().Get_colorsvar())
-			{
-				filltheTriangles();
-			}
+			//if (!scene.GetActiveModel().Get_colorsvar())
+			//{
+		//		filltheTriangles();
+		//	}
 			
 			if (scene.getfog() !=0)
 				Fogfunc(scene);
