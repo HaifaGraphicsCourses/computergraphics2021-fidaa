@@ -426,6 +426,7 @@ void Renderer::Render(const Scene& scene)
 				c0 = glm::vec3(0.f, 0.f, 0.f);
 				c1 = glm::vec3(0.f, 0.f, 0.f);
 				c2 = glm::vec3(0.f, 0.f, 0.f);
+
 				for (int i = 0; i < scene.Get_count_oflights(); i++)
 				{
 					light& light = scene.GetLight(i);
@@ -458,7 +459,10 @@ void Renderer::Render(const Scene& scene)
 
 						}
 						else
-							d1= glm::normalize(light.Get_Direction()); d2= glm::normalize(light.Get_Direction()); d3= glm::normalize(light.Get_Direction());
+						{
+							d1 = glm::normalize(light.Get_Direction()); d2 = glm::normalize(light.Get_Direction()); d3 = glm::normalize(light.Get_Direction());
+						}
+							
 						c0 = Diffuse_Color((nv1), d1, model.Get_modelDiffuse_Color(), light);
 						c1 = Diffuse_Color((nv2), d2, model.Get_modelDiffuse_Color(), light);
 						c2 = Diffuse_Color((nv3), d3, model.Get_modelDiffuse_Color(), light);
@@ -472,6 +476,16 @@ void Renderer::Render(const Scene& scene)
 					}
 					if (scene.GetshadingLight() == 2) //phong
 					{
+						if (light.Get_Type() == 2) //point
+						{
+							filltheTriangle_phong(V0new, V1new, V2new, nv1, nv2, nv3, scene, light, position, 2);
+						}
+						else
+						{
+							filltheTriangle_phong(V0new, V1new, V2new, nv1, nv2, nv3, scene, light, position, 1);
+						}
+						
+					}
 				}
 				if(scene.GetshadingLight()==0)//flat
 			     	filltheTriangle_Flat(V0new, V1new, V2new, color);
@@ -917,21 +931,23 @@ void Renderer::filltheTriangle_Flat(const glm::vec3& p1, const glm::vec3& p2, co
 				glm::vec3 z = Calc_z(i, j, p1, p2, p3, p1, p2, p3);
 				if (z.z <= Get_Z_value(i, j))
 				{
-					//if (i < 0) return; if (i >= viewport_width_) return;
-					//if (j < 0) return; if (j >= viewport_height_) return;
+					if (i < 0) return; if (i >= viewport_width_) return;
+					if (j < 0) return; if (j >= viewport_height_) return;
 					
 					color_buffer_[INDEX(viewport_width_, i, j, 0)] += color.x;
 					color_buffer_[INDEX(viewport_width_, i, j, 1)] += color.y;
 					color_buffer_[INDEX(viewport_width_, i, j, 2)] += color.z;
 
-					if (color.x > 1.f)
+
+					if (color_buffer_[INDEX(viewport_width_, i, j, 0)] > 1.f) //
 						color_buffer_[INDEX(viewport_width_, i, j, 0)] = 1.f;
 
-					if (color.y > 1.f)
+					if (color_buffer_[INDEX(viewport_width_, i, j, 1)] > 1.f)
 						color_buffer_[INDEX(viewport_width_, i, j, 1)] = 1.f;
 
-					if (color.z > 1.f)
+					if (color_buffer_[INDEX(viewport_width_, i, j, 2)] > 1.f)
 						color_buffer_[INDEX(viewport_width_, i, j, 2)] = 1.f;
+
 
 				}
 
@@ -940,6 +956,62 @@ void Renderer::filltheTriangle_Flat(const glm::vec3& p1, const glm::vec3& p2, co
 
 	}
 }
+
+void Renderer::filltheTriangle_phong(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, glm::vec3 n1, glm::vec3 n2, glm::vec3 n3,const Scene& scene,light& light,glm::vec3 position, int flag)
+{
+	float minY = std::min(std::min(p1.y, p2.y), p3.y);
+	float maxY = std::max(std::max(p1.y, p2.y), p3.y);
+	float minX = std::min(std::min(p1.x, p2.x), p3.x);
+	float maxX = std::max(std::max(p1.x, p2.x), p3.x);
+	glm::vec3 I;
+	for (int j = maxY; j >= minY; j--)
+	{
+		for (int i = minX; i <= maxX; i++)
+		{
+			if (IsInsidetheTrianle(i, j, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y))
+			{
+				glm::vec3 z = Calc_z(i, j, p1, p2, p3, p1, p2, p3);
+				if (z.z <= Get_Z_value(i, j))
+				{
+					if (i < 0) return; if (i >= viewport_width_) return;
+					if (j < 0) return; if (j >= viewport_height_) return;
+					if (flag == 2) //point
+					{
+						 I = normalize(z - position);
+					}
+					else
+					{
+						 I = normalize(light.Get_Direction());
+					}
+					glm::vec3 n = Calc_z(i, j, p1, p2, p3, n1, n2, n3);
+					glm::vec3 c = Ambient_color(light.Get_Ambient_Color(), scene.GetActiveModel().Get_modelAmbient_Color());
+					c += Diffuse_Color(n, I, scene.GetActiveModel().Get_modelDiffuse_Color(), light);
+					c += Specular_Color(n, I, glm::normalize(scene.GetActiveCamera().Get_Eye()),scene.GetActiveModel().Get_modelSpecular_Color(),light);
+					
+					
+					color_buffer_[INDEX(viewport_width_, i, j, 0)] += c.x;
+					color_buffer_[INDEX(viewport_width_, i, j, 1)] += c.y;
+					color_buffer_[INDEX(viewport_width_, i, j, 2)] += c.z;
+
+					if (color_buffer_[INDEX(viewport_width_, i, j, 0)] > 1.f) //
+						color_buffer_[INDEX(viewport_width_, i, j, 0)] = 1.f;
+
+					if (color_buffer_[INDEX(viewport_width_, i, j, 1)] > 1.f)
+						color_buffer_[INDEX(viewport_width_, i, j, 1)] = 1.f;
+
+					if (color_buffer_[INDEX(viewport_width_, i, j, 2)] > 1.f)
+						color_buffer_[INDEX(viewport_width_, i, j, 2)] = 1.f;
+
+
+				}
+
+			}
+		}
+
+	}
+}
+
+
 void Renderer::filltheTriangle_gouraud(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, glm::vec3& c1, glm::vec3& c2, glm::vec3& c3)
 {
 	float minY = std::min(std::min(p1.y, p2.y), p3.y);
@@ -955,20 +1027,20 @@ void Renderer::filltheTriangle_gouraud(const glm::vec3& p1, const glm::vec3& p2,
 				glm::vec3 z = Calc_z(i, j, p1, p2, p3, p1, p2, p3);
 				if (z.z <= Get_Z_value(i, j))
 				{
-					//if (i < 0) return; if (i >= viewport_width_) return;
-					//if (j < 0) return; if (j >= viewport_height_) return;
+					if (i < 0) return; if (i >= viewport_width_) return;
+					if (j < 0) return; if (j >= viewport_height_) return;
 					glm::vec3 c = Calc_z(i, j, p1, p2, p3, c1, c2, c3);
 					color_buffer_[INDEX(viewport_width_, i, j, 0)] += c.x;
 					color_buffer_[INDEX(viewport_width_, i, j, 1)] += c.y;
 					color_buffer_[INDEX(viewport_width_, i, j, 2)] += c.z;
 
-					if (c.x > 1.f)
+					if (color_buffer_[INDEX(viewport_width_, i, j, 0)] > 1.f) //
 						color_buffer_[INDEX(viewport_width_, i, j, 0)] = 1.f;
 						
-					if (c.y > 1.f)
+					if (color_buffer_[INDEX(viewport_width_, i, j, 1)] > 1.f)
 						color_buffer_[INDEX(viewport_width_, i, j, 1)] = 1.f;
 					
-					if (c.z > 1.f)
+					if (color_buffer_[INDEX(viewport_width_, i, j, 2)] > 1.f)
 						color_buffer_[INDEX(viewport_width_, i, j, 2)] = 1.f;
 					
 						
