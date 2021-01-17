@@ -1064,4 +1064,51 @@ void Renderer::filltheTriangle_gouraud(const glm::vec3& p1, const glm::vec3& p2,
 		}
 
 	}
+}}
+
+
+
+void Renderer::Fogfunc(const Scene& scene)
+{
+	
+	int half_width = viewport_width_ / 2;
+	int half_height = viewport_height_ / 2;
+	float  z;
+	float FogStart = minbufferZ, FogEnd = maxbufferZ;
+	glm::vec3 c;
+	for (int i = 0; i < viewport_width_; i++)
+		for (int j = 0; j < viewport_height_; j++)
+		{
+			float vertexViewDistance = z_buffer_[Z_INDEX(viewport_width_, i, j)];
+			if (vertexViewDistance != FLT_MAX)
+			{
+				c = glm::vec3(color_buffer_[INDEX(viewport_width_, i, j, 0)], color_buffer_[INDEX(viewport_width_, i, j, 1)], color_buffer_[INDEX(viewport_width_, i, j, 2)]);
+				//float vertexViewDistance = z;
+				float Factor;
+				if (scene.getfog()==1)
+				{
+					if (!scene.GetActiveCamera().Get_OrthoGraphic())
+						int x = 3;
+					Factor = (FogEnd - vertexViewDistance) / (FogEnd - FogStart);
+					if (Factor < 0 || Factor > 1)
+						Factor = 1;
+				}
+				else if (scene.getfog() == 3)
+				{
+					Factor = std::exp(-(vertexViewDistance * vertexViewDistance * scene.getFogDensity() * scene.getFogDensity()));
+					if (Factor < 0 || Factor > 1)
+						Factor = 1;
+				}
+				else if (scene.getfog() == 2)
+				{
+					Factor = std::exp(-vertexViewDistance * scene.getFogDensity());
+					if (Factor < 0 || Factor > 1)
+						Factor = 1;
+				}
+				c = ((1 - Factor) * glm::vec3(0.5, 0.5, 0.5) + Factor * c);
+				color_buffer_[INDEX(viewport_width_, i, j, 0)] = c.x;
+				color_buffer_[INDEX(viewport_width_, i, j, 1)] = c.y;
+				color_buffer_[INDEX(viewport_width_, i, j, 2)] = c.z;
+			}
+		}
 }

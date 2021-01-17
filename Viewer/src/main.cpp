@@ -597,6 +597,23 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			{
 				scene.GetActiveModel().Set_colorsvar(0);
 			}
+
+			
+			static int f = 0;
+			ImGui::RadioButton("linear fog", &f, 1);
+			ImGui::RadioButton("Exponential fog", &f, 2);
+			ImGui::RadioButton("Exponential squared fog", &f, 3);
+			scene.Setfog(f);
+			static float dis = 5;
+			ImGui::SliderFloat("Fog Density", &dis, 0.f,500.f);
+			scene.SetFogDensity(dis);
+			int w = ImGui::Button("without fog effect");
+			
+			if (w)
+			{
+				f = 0;
+				scene.Setfog(f);
+			}
 		
 		ImGui::End();
 

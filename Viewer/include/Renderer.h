@@ -33,6 +33,7 @@ public:
 	void filltheTriangle_phong(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, glm::vec3 n1, glm::vec3 n2, glm::vec3 n3,const Scene& scene, light& light, glm::vec3 position, int flag);
 
 
+	void Fogfunc(const Scene& scene);
 	
 	
 private:
