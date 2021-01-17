@@ -20,6 +20,7 @@ after implement the z-buffer algorithm:
 
 ![gray1](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/gray1(1).png)
 ![gray2](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/gray2(1).png)
+![rotate_banana](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/rotate_banana.png)
 
 
 ![gray_bishop](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/grybishop.png)
