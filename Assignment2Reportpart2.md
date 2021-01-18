@@ -35,10 +35,17 @@ difference in shading:
 ![flat](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/flat.png)
 ![gu](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/gu.png)
 ![spec](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/spec.png)
+we can see the difference between the phong and the gouraud clearly in those images:
+![gu2](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/gu2.png)
+![phong](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/pho2.png)
+
 
 #### fog effect:
+we can see the "far" part of the model is more gray than the near part in the first image, and we can see the difference between the linear and exponential fog.
 ![fog1](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/fog1.png)
 ![fog2](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/fog2.png)
+
+and here we can see what happend if we changed the fog Density in the exponential fog: 
 ![fog3](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/fog3.png)
 ![fog4](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/fog4.png)
 Thank U.
