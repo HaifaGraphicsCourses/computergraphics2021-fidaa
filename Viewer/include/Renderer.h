@@ -41,8 +41,8 @@ public:
 
 	void Fogfunc(const Scene& scene);
 	void LoadShaders();
-	//void LoadTextures();
-	//Texture2D texture1;
+	void LoadTextures();
+	Texture2D texture1;
 	
 	
 private:

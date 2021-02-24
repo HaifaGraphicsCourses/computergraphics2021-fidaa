@@ -1153,12 +1153,15 @@ void Renderer::Render( Scene& scene)
 			// Set 'texture1' as the active texture at slot #0
 			//texture1.bind(0);
 
+			texture1.bind(0);
+
 			// Drag our model's faces (triangles) in fill mode
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			glBindVertexArray(currentModel->GetVAO());
 			glDrawArrays(GL_TRIANGLES, 0, currentModel->GetModelVertices().size());
 			glBindVertexArray(0);
 
+			texture1.unbind(0);
 			// Unset 'texture1' as the active texture at slot #0
 			//texture1.unbind(0);
 
@@ -1177,7 +1180,7 @@ void Renderer::LoadShaders()
 {
 	colorShader.loadShaders("vshader.glsl", "fshader.glsl");
 }
-/*
+
 void Renderer::LoadTextures()
 {
 	if (!texture1.loadTexture("bin\\Debug\\crate.jpg", true))
@@ -1185,4 +1188,3 @@ void Renderer::LoadTextures()
 		texture1.loadTexture("bin\\Release\\crate.jpg", true);
 	}
 }
-*/

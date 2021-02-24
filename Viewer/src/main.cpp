@@ -80,6 +80,7 @@ int main(int argc, char **argv)
 
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	renderer.LoadShaders();
+	renderer.LoadTextures();
 	Scene scene = Scene();
 	
 	ImGuiIO& io = SetupDearImgui(window);

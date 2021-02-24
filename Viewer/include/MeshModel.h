@@ -20,7 +20,7 @@ public:
 	//MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4 T,float MAX, float maxX, float maxY, float maxZ, float minX, float minY, float minZ);
 
 
-	MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& modelName, glm::mat4x4 T, float MAX, float maxX, float maxY, float maxZ, float minX, float minY, float minZ);
+	MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> textureCoords, const std::string& modelName, glm::mat4x4 T, float MAX, float maxX, float maxY, float maxZ, float minX, float minY, float minZ);
 	virtual ~MeshModel();
 	const Face& GetFace(int index) const;
 	int GetFacesCount() const;
@@ -71,7 +71,7 @@ public:
 
 	const std::vector<Vertex>& GetModelVertices();
 	GLuint GetVAO() const;
-
+	std::vector<glm::vec2> textureCoords;
 
 protected:
 	std::vector<Vertex> modelVertices;
@@ -89,8 +89,6 @@ private:
 	std::string modelName;
 
 	glm::vec3 color;
-
-	std::vector<glm::vec3> textureCoords;
 
 	
 

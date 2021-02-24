@@ -31,6 +31,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	std::vector<glm::vec3> normals;
 	std::ifstream ifile(filePath.c_str());
 	glm::vec3 Vertex;
+	std::vector<glm::vec2> textureCoords;
 	float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0, MAX = 0;
 	
 
@@ -84,6 +85,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		else if (lineType == "vt")
 		{
 			// TODO: Handle texture coordinates
+			textureCoords.push_back(Utils::Vec2fFromStream(issLine));
 		}
 		else if (lineType == "f")
 		{
@@ -113,7 +115,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	}
 	glm::mat4x4 ScalingMat = glm::scale(glm::vec3(350 / MAX, 350 / MAX, 350 / MAX));
 	glm::mat4x4 TranMat = glm::translate(glm::vec3(abs(minX), abs(minY), abs(minZ)));
-	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath),ScalingMat*TranMat,MAX,maxX,maxY,maxZ,minX,minY,minZ);
+	return std::make_shared<MeshModel>(faces, vertices, normals, textureCoords,Utils::GetFileName(filePath),ScalingMat*TranMat,MAX,maxX,maxY,maxZ,minX,minY,minZ);
 }
 
 std::string Utils::GetFileName(const std::string& filePath)
