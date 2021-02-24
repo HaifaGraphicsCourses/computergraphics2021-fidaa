@@ -2,6 +2,12 @@
 #include "Scene.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include "ShaderProgram.h"
+#include <vector>
+#include <GLFW/glfw3.h>
+#include <imgui/imgui.h>
+#include <memory>
+#include "Texture2D.h"
 
 class Renderer
 {
@@ -9,7 +15,7 @@ public:
 	Renderer(int viewportWidth, int viewportHeight);
 	
 	virtual ~Renderer();
-	void Render(const Scene& scene);
+	void Render( Scene& scene);
 	void SwapBuffers();
 	void ClearColorBuffer(const glm::vec3& color);
 	int GetViewportWidth() const;
@@ -34,6 +40,9 @@ public:
 
 
 	void Fogfunc(const Scene& scene);
+	void LoadShaders();
+	//void LoadTextures();
+	//Texture2D texture1;
 	
 	
 private:
@@ -52,5 +61,9 @@ private:
 	float maxbufferZ = std::numeric_limits<float>::min(); //
 	float minbufferZ = std::numeric_limits<float>::max();; //
 	float* z_buffer_;
+
+	ShaderProgram lightShader;
+	ShaderProgram colorShader;
+	
 
 };

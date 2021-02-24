@@ -54,6 +54,10 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 void Cleanup(GLFWwindow* window);
 void DrawImguiMenus(ImGuiIO& io, Scene& scene);
 
+//
+
+
+//
 /**
  * Function implementation
  */
@@ -75,7 +79,7 @@ int main(int argc, char **argv)
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
-	
+	renderer.LoadShaders();
 	Scene scene = Scene();
 	
 	ImGuiIO& io = SetupDearImgui(window);
@@ -84,7 +88,12 @@ int main(int argc, char **argv)
     {
         glfwPollEvents();
 		StartFrame();
+		
 		DrawImguiMenus(io, scene);
+		glEnable(GL_DEPTH_TEST);
+		glClearColor(1.f, 1.f, 1.f, 1.f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		RenderFrame(window, scene, renderer, io);
     }
 
@@ -174,9 +183,9 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 		}
 	}
 
-	renderer.ClearColorBuffer(clear_color);
+	//renderer.ClearColorBuffer(clear_color);
 	renderer.Render(scene);
-	renderer.SwapBuffers();
+	//renderer.SwapBuffers();
 
 	renderer.Set_ZBuffertoMax();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -325,9 +334,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::ColorEdit3("ambient color", ambientcolor_m);
 		ImGui::ColorEdit3("diffuse color", diffusecolor_m);
 		ImGui::ColorEdit3("specular color", specularcolor_m);
-		scene.GetActiveModel().Set_modelAmbient_Color(glm::vec3(ambientcolor_m[0], ambientcolor_m[1], ambientcolor_m[2]));
-		scene.GetActiveModel().Set_modelDiffuse_Color(glm::vec3(diffusecolor_m [0], diffusecolor_m [1], diffusecolor_m[2]));
-		scene.GetActiveModel().Set_modelSpecular_Color(glm::vec3(specularcolor_m[0], specularcolor_m[1], specularcolor_m[2]));
+		scene.GetActiveModel()->Set_modelAmbient_Color(glm::vec3(ambientcolor_m[0], ambientcolor_m[1], ambientcolor_m[2]));
+		scene.GetActiveModel()->Set_modelDiffuse_Color(glm::vec3(diffusecolor_m [0], diffusecolor_m [1], diffusecolor_m[2]));
+		scene.GetActiveModel()->Set_modelSpecular_Color(glm::vec3(specularcolor_m[0], specularcolor_m[1], specularcolor_m[2]));
 		
 		if (listbox_item_current == 0) // local(model)
 		{
@@ -340,7 +349,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::InputFloat("tranlation y steps", &Tm_vec[1]);
 				ImGui::InputFloat("tranlation z steps", &Tm_vec[2]);
 
-				scene.GetActiveModel().Set_Tm_mat(glm::translate(glm::vec3(Tm_vec[0], Tm_vec[1], Tm_vec[2])));
+				scene.GetActiveModel()->Set_Tm_mat(glm::translate(glm::vec3(Tm_vec[0], Tm_vec[1], Tm_vec[2])));
 
 
 			}
@@ -359,8 +368,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					if (lastax_m != ax_m)
 					{
 						lastax_m = ax_m;
-						scene.GetActiveModel().Set_Rm_mat(glm::rotate(ax_m, glm::vec3(1, 0, 0)),0);
-						scene.GetActiveModel().Set_transmatrix();
+						scene.GetActiveModel()->Set_Rm_mat(glm::rotate(ax_m, glm::vec3(1, 0, 0)),0);
+						scene.GetActiveModel()->Set_transmatrix();
 					}
 
 					
@@ -372,8 +381,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					if (lastay_m != ay_m)
 					{
 						lastay_m = ay_m;
-						scene.GetActiveModel().Set_Rm_mat(glm::rotate(ay_m, glm::vec3(0, 1, 0)),1);
-						scene.GetActiveModel().Set_transmatrix();
+						scene.GetActiveModel()->Set_Rm_mat(glm::rotate(ay_m, glm::vec3(0, 1, 0)),1);
+						scene.GetActiveModel()->Set_transmatrix();
 					}
 				}
 				if (current_rotation == 2) // around z
@@ -383,8 +392,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					if (lastaz_m != az_m)
 					{
 						lastaz_m = az_m;
-						scene.GetActiveModel().Set_Rm_mat(glm::rotate(az_m, glm::vec3(0, 0, 1)), 2);
-						scene.GetActiveModel().Set_transmatrix();
+						scene.GetActiveModel()->Set_Rm_mat(glm::rotate(az_m, glm::vec3(0, 0, 1)), 2);
+						scene.GetActiveModel()->Set_transmatrix();
 					}
 				
 				
@@ -402,7 +411,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::InputFloat("Y", &Sm_vec[1]);
 				ImGui::InputFloat("Z", &Sm_vec[2]);
 
-				scene.GetActiveModel().Set_Sm_mat(glm::scale(glm::vec3(Sm_vec[0], Sm_vec[1], Sm_vec[2])));
+				scene.GetActiveModel()->Set_Sm_mat(glm::scale(glm::vec3(Sm_vec[0], Sm_vec[1], Sm_vec[2])));
 				
 			}
 			
@@ -421,7 +430,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::InputFloat("tranlation y steps", &Tw_vec[1]);
 				ImGui::InputFloat("tranlation z steps", &Tw_vec[2]);
 
-				scene.GetActiveModel().Set_Tw_mat(glm::translate(glm::vec3(Tw_vec[0], Tw_vec[1], Tw_vec[2])));
+				scene.GetActiveModel()->Set_Tw_mat(glm::translate(glm::vec3(Tw_vec[0], Tw_vec[1], Tw_vec[2])));
 
 			}
 			ImGui::Checkbox("Rotation", &Rw);
@@ -440,8 +449,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					if (lastax_w != ax_w)
 					{
 						lastax_w = ax_w;
-						scene.GetActiveModel().Set_Rm_mat(glm::rotate(ax_w, glm::vec3(1, 0, 0)), 0);
-						scene.GetActiveModel().Set_transmatrix();
+						scene.GetActiveModel()->Set_Rm_mat(glm::rotate(ax_w, glm::vec3(1, 0, 0)), 0);
+						scene.GetActiveModel()->Set_transmatrix();
 					}
 
 
@@ -453,8 +462,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					if (lastay_w != ay_w)
 					{
 						lastay_w = ay_w;
-						scene.GetActiveModel().Set_Rm_mat(glm::rotate(ay_w, glm::vec3(0, 1, 0)), 1);
-						scene.GetActiveModel().Set_transmatrix();
+						scene.GetActiveModel()->Set_Rm_mat(glm::rotate(ay_w, glm::vec3(0, 1, 0)), 1);
+						scene.GetActiveModel()->Set_transmatrix();
 					}
 				}
 				if (current_rotation == 2)
@@ -464,8 +473,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					if (lastaz_w != az_w)
 					{
 						lastaz_w = az_w;
-						scene.GetActiveModel().Set_Rm_mat(glm::rotate(az_w, glm::vec3(0, 0, 1)), 2);
-						scene.GetActiveModel().Set_transmatrix();
+						scene.GetActiveModel()->Set_Rm_mat(glm::rotate(az_w, glm::vec3(0, 0, 1)), 2);
+						scene.GetActiveModel()->Set_transmatrix();
 					}
 
 
@@ -483,19 +492,19 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::InputFloat("Y", &Sw_vec[1]);
 				ImGui::InputFloat("Z", &Sw_vec[2]);
 
-				scene.GetActiveModel().Set_Sw_mat(glm::scale(glm::vec3(Sw_vec[0], Sw_vec[1], Sw_vec[2])));
+				scene.GetActiveModel()->Set_Sw_mat(glm::scale(glm::vec3(Sw_vec[0], Sw_vec[1], Sw_vec[2])));
 
 			}
 			
 
 		}
-		scene.GetActiveModel().Set_transmatrix();
-		scene.GetActiveModel().Set_Reset(0);
+		scene.GetActiveModel()->Set_transmatrix();
+		scene.GetActiveModel()->Set_Reset(0);
 		
 		int reset = ImGui::Button("Reset");
 		if (reset)
 		{
-			scene.GetActiveModel().Set_Reset(1);
+			scene.GetActiveModel()->Set_Reset(1);
 			Tm = 0;
 			Rm = 0;
 			Sm = 0;
@@ -543,11 +552,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 		if ((Counterbox % 2) == 0)
 		{
-			scene.GetActiveModel().Set_showbox(0);
+			scene.GetActiveModel()->Set_showbox(0);
 		}
 		else
 		{
-			scene.GetActiveModel().Set_showbox(1);
+			scene.GetActiveModel()->Set_showbox(1);
 		}
 			
 		
@@ -557,11 +566,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				facenormals_counter++;
 				if ((facenormals_counter % 2) == 0)
 				{
-					scene.GetActiveModel().Set_facenormals(0);
+					scene.GetActiveModel()->Set_facenormals(0);
 				}
 				else
 				{
-					scene.GetActiveModel().Set_facenormals(1);
+					scene.GetActiveModel()->Set_facenormals(1);
 				}
 			}
 			
@@ -570,11 +579,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				vernormals_counter++;
 				if ((vernormals_counter % 2) == 0)
 				{
-					scene.GetActiveModel().Set_vernormals(0);
+					scene.GetActiveModel()->Set_vernormals(0);
 				}
 				else
 				{
-					scene.GetActiveModel().Set_vernormals(1);
+					scene.GetActiveModel()->Set_vernormals(1);
 				}
 			}
 			
@@ -585,7 +594,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::PopStyleColor(3);
 			if (c)
 			{
-				scene.GetActiveModel().Set_colorsvar(1);
+				scene.GetActiveModel()->Set_colorsvar(1);
 			}
 			ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.0f, 0.8f));
@@ -595,7 +604,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::PopStyleColor(3);
 			if (g)
 			{
-				scene.GetActiveModel().Set_colorsvar(0);
+				scene.GetActiveModel()->Set_colorsvar(0);
 			}
 
 			
@@ -632,7 +641,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		static float camera_Tm_vec[3] = { 0.0f, 0.0f, 0.0f };
 		static float camera_Tw_vec[3] = { 0.0f, 0.0f, 0.0f };
-		static float ortho_val = scene.GetActiveModel().Get_orthoGraphicVal();
+		static float ortho_val = scene.GetActiveModel()->Get_orthoGraphicVal();
 		static float fovy_m = 45;
 
 		static float camera_anglem = 0.0f;
@@ -657,52 +666,52 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		if (camera_current_proj == 0)
 		{
-			if (scene.GetActiveModel().GetModelName() == "banana.obj")
+			if (scene.GetActiveModel()->GetModelName() == "banana.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "beethoven.obj")
+			if (scene.GetActiveModel()->GetModelName() == "beethoven.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "bishop.obj")
+			if (scene.GetActiveModel()->GetModelName() == "bishop.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "bunny.obj")
+			if (scene.GetActiveModel()->GetModelName() == "bunny.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "camera.obj")
+			if (scene.GetActiveModel()->GetModelName() == "camera.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "chain.obj")
+			if (scene.GetActiveModel()->GetModelName() == "chain.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "cow.obj")
+			if (scene.GetActiveModel()->GetModelName() == "cow.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "demo.obj")
+			if (scene.GetActiveModel()->GetModelName() == "demo.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "dolphin.obj")
+			if (scene.GetActiveModel()->GetModelName() == "dolphin.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 300.0f, 2000.0f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "pawn.obj")
+			if (scene.GetActiveModel()->GetModelName() == "pawn.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
-			if (scene.GetActiveModel().GetModelName() == "teapot.obj")
+			if (scene.GetActiveModel()->GetModelName() == "teapot.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 100.0f);
 			}
 
-			if (scene.GetActiveModel().GetModelName() == "Sphere.obj")
+			if (scene.GetActiveModel()->GetModelName() == "Sphere.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
 			}
@@ -851,7 +860,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Look at:\n");
 
-		static float eye_vec[3] = { 0.0f, 0.0f, scene.GetActiveModel().Get_Zeye() };
+		static float eye_vec[3] = { 0.0f, 0.0f, scene.GetActiveModel()->Get_Zeye() };
 		static float at_vec[3] = { 0.0f, 0.0f, 0.0f };
 		static float up_vec[3] = { 0.0f, 1.0f, 0.0f };
 
@@ -914,14 +923,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3/ 7.0f, 0.7f, 0.7f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(3 / 7.0f, 0.8f, 0.8f));
 		static std::vector <bool> lights;
+
+
 		if (ImGui::Button("ADD"))
 		{
 			counter++;
-			std::shared_ptr<light>& new_light = std::make_shared<light>();
+			std::shared_ptr<light>& new_light = std::make_shared<light>(glm::vec3(0,0,0), LightType + 1);
 			(*new_light).Set_Ambient_Color(glm::vec3(ambientcolor[0], ambientcolor[1], ambientcolor[2]));
 			(*new_light).Set_Diffuse_Color(glm::vec3(diffusecolor[0], diffusecolor[1], diffusecolor[2]));
 			(*new_light).Set_Specular_Color(glm::vec3(specularcolor[0], specularcolor[1], specularcolor[2]));
-			(*new_light).Set_Type(LightType + 1);
+			//(*new_light).Set_Type(LightType + 1);
 			scene.AddLight(new_light);
 			scene.SetActiveLightIndex(0);
 			lights.push_back(0);
@@ -958,14 +969,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::ColorEdit3("active specular color", active_specularcolor);
 		if (scene.Get_count_oflights())
 		{
-			scene.GetActivelight().Set_Ambient_Color(glm::vec3(active_ambientcolor[0], active_ambientcolor[1], active_ambientcolor[2]));
-			scene.GetActivelight().Set_Diffuse_Color(glm::vec3(active_diffusecolor[0], active_diffusecolor[1], active_diffusecolor[2]));
-			scene.GetActivelight().Set_Specular_Color(glm::vec3(active_specularcolor[0], active_specularcolor[1], active_specularcolor[2]));
+			scene.GetActivelight()->Set_Ambient_Color(glm::vec3(active_ambientcolor[0], active_ambientcolor[1], active_ambientcolor[2]));
+			scene.GetActivelight()->Set_Diffuse_Color(glm::vec3(active_diffusecolor[0], active_diffusecolor[1], active_diffusecolor[2]));
+			scene.GetActivelight()->Set_Specular_Color(glm::vec3(active_specularcolor[0], active_specularcolor[1], active_specularcolor[2]));
 			static float alpha = 5;
 			ImGui::SliderFloat("alpha", &alpha, 1.0f, 10.0f);
-			scene.GetActivelight().Set_alpha(alpha);
+			scene.GetActivelight()->Set_alpha(alpha);
 
-			if (scene.GetActivelight().Get_Type() == 1)
+			if (scene.GetActivelight()->Get_Type() == 1)
 			{
 				ImGui::Text("Light direction\n");
 
@@ -978,7 +989,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::InputScalar("X", ImGuiDataType_Float, &f1_v, inputs_step ? &f32_one : NULL);
 				ImGui::InputScalar("Y", ImGuiDataType_Float, &f2_v, inputs_step ? &f32_one : NULL);
 				ImGui::InputScalar("Z", ImGuiDataType_Float, &f3_v, inputs_step ? &f32_one : NULL);
-				scene.GetActivelight().Set_Direction(glm::vec3(f1_v, f2_v, f3_v));
+				scene.GetActivelight()->Set_Direction(glm::vec3(f1_v, f2_v, f3_v));
 			}
 			else
 			{
@@ -1029,8 +1040,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 							ImGui::InputFloat("tranlation x steps", &Tm_vec_light[0]);
 							ImGui::InputFloat("tranlation y steps", &Tm_vec_light[1]);
 							ImGui::InputFloat("tranlation z steps", &Tm_vec_light[2]);
-							scene.GetActivelight().Set_Tm_mat(glm::translate(glm::vec3(Tm_vec_light[0], Tm_vec_light[1], Tm_vec_light[2])));
-							scene.GetActivelight().Set_transmatrix();
+							scene.GetActivelight()->Set_Tm_mat(glm::translate(glm::vec3(Tm_vec_light[0], Tm_vec_light[1], Tm_vec_light[2])));
+							scene.GetActivelight()->Set_transmatrix();
 
 						}
 						ImGui::Checkbox("Rotation", &Rm_light);
@@ -1048,8 +1059,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 								if (lastax_m_light != ax_m_light)
 								{
 									lastax_m_light = ax_m_light;
-									scene.GetActivelight().Set_Rm_mat(glm::rotate(ax_m_light, glm::vec3(1, 0, 0)), 0);
-									scene.GetActivelight().Set_transmatrix();
+									scene.GetActivelight()->Set_Rm_mat(glm::rotate(ax_m_light, glm::vec3(1, 0, 0)), 0);
+									scene.GetActivelight()->Set_transmatrix();
 								}
 
 
@@ -1061,8 +1072,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 								if (lastay_m_light != ay_m_light)
 								{
 									lastay_m_light = ay_m_light;
-									scene.GetActivelight().Set_Rm_mat(glm::rotate(ay_m_light, glm::vec3(0, 1, 0)), 1);
-									scene.GetActivelight().Set_transmatrix();
+									scene.GetActivelight()->Set_Rm_mat(glm::rotate(ay_m_light, glm::vec3(0, 1, 0)), 1);
+									scene.GetActivelight()->Set_transmatrix();
 								}
 							}
 							if (current_lightrotation == 2) // around z
@@ -1072,8 +1083,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 								if (lastaz_m_light != az_m_light)
 								{
 									lastaz_m_light = az_m_light;
-									scene.GetActivelight().Set_Rm_mat(glm::rotate(az_m_light, glm::vec3(0, 0, 1)), 2);
-									scene.GetActivelight().Set_transmatrix();
+									scene.GetActivelight()->Set_Rm_mat(glm::rotate(az_m_light, glm::vec3(0, 0, 1)), 2);
+									scene.GetActivelight()->Set_transmatrix();
 								}
 
 
@@ -1096,8 +1107,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 							ImGui::InputFloat("tranlation y steps", &Tw_vec_light[1]);
 							ImGui::InputFloat("tranlation z steps", &Tw_vec_light[2]);
 
-							scene.GetActivelight().Set_Tw_mat(glm::translate(glm::vec3(Tw_vec_light[0], Tw_vec_light[1], Tw_vec_light[2])));
-							scene.GetActivelight().Set_transmatrix();
+							scene.GetActivelight()->Set_Tw_mat(glm::translate(glm::vec3(Tw_vec_light[0], Tw_vec_light[1], Tw_vec_light[2])));
+							scene.GetActivelight()->Set_transmatrix();
 						}
 						ImGui::Checkbox("Rotation", &Rw_light);
 						if (Rw_light)
@@ -1115,8 +1126,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 								if (lastax_w_light != ax_w_light)
 								{
 									lastax_w_light = ax_w_light;
-									scene.GetActivelight().Set_Rm_mat(glm::rotate(ax_w_light, glm::vec3(1, 0, 0)), 0);
-									scene.GetActivelight().Set_transmatrix();
+									scene.GetActivelight()->Set_Rm_mat(glm::rotate(ax_w_light, glm::vec3(1, 0, 0)), 0);
+									scene.GetActivelight()->Set_transmatrix();
 								}
 
 
@@ -1128,8 +1139,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 								if (lastay_w_light != ay_w_light)
 								{
 									lastay_w_light = ay_w_light;
-									scene.GetActivelight().Set_Rm_mat(glm::rotate(ay_w_light, glm::vec3(0, 1, 0)), 1);
-									scene.GetActivelight().Set_transmatrix();
+									scene.GetActivelight()->Set_Rm_mat(glm::rotate(ay_w_light, glm::vec3(0, 1, 0)), 1);
+									scene.GetActivelight()->Set_transmatrix();
 								}
 							}
 							if (current_lightrotation == 2)
@@ -1139,8 +1150,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 								if (lastaz_w_light != az_w_light)
 								{
 									lastaz_w_light = az_w_light;
-									scene.GetActivelight().Set_Rm_mat(glm::rotate(az_w_light, glm::vec3(0, 0, 1)), 2);
-									scene.GetActivelight().Set_transmatrix();
+									scene.GetActivelight()->Set_Rm_mat(glm::rotate(az_w_light, glm::vec3(0, 0, 1)), 2);
+									scene.GetActivelight()->Set_transmatrix();
 								}
 
 
@@ -1149,7 +1160,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 						}
 
 					}
-					scene.GetActivelight().Set_transmatrix();
+					scene.GetActivelight()->Set_transmatrix();
 				}
 			}
 		}

@@ -17,7 +17,7 @@ Renderer::Renderer(int viewport_width, int viewport_height) :
 	viewport_width_(viewport_width),
 	viewport_height_(viewport_height)
 {
-	InitOpenGLRendering();
+	//InitOpenGLRendering();
 	CreateBuffers(viewport_width, viewport_height);
 }
 
@@ -318,7 +318,7 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 		}
 	}
 }
-
+/*
 void Renderer::Render(const Scene& scene)
 {
 	int half_width = viewport_width_ / 2;
@@ -629,6 +629,8 @@ void Renderer::Render(const Scene& scene)
 	return;
 
 }
+*/
+
 
 int Renderer::GetViewportWidth() const
 {
@@ -642,59 +644,7 @@ int Renderer::GetViewportHeight() const
 
 void Renderer::Scan_andset_Zbuffer(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3)
 {
-	/*glm::vec3 _color = glm::vec3(0.1,0.5, 1);
-	if (p1.x >= p2.x && p1.x >= p3.x)
-	{
-		maxX = p1.x;
-	}
-	if (p2.x >= p1.x && p2.x >= p3.x)
-	{
-		maxX = p2.x;
-	}
-	if (p3.x >= p2.x && p3.x >= p1.x)
-	{
-		maxX = p3.x;
-	}
-	//minx
-	if (p1.x <= p2.x && p1.x <= p3.x)
-	{
-		minX = p1.x;
-	}
-	if (p2.x <= p1.x && p2.x <= p3.x)
-	{
-		minX = p2.x;
-	}
-	if (p3.x <= p2.x && p3.x <= p1.x)
-	{
-		minX = p3.x;
-	}
-	//maxy
-	if (p1.y >= p2.y && p1.y >= p3.y)
-	{
-		maxY = p1.y;
-	}
-	if (p2.y >= p1.y && p2.y >= p3.y)
-	{
-		maxY = p2.y;
-	}
-	if (p3.y >= p2.y && p3.y >= p1.y)
-	{
-		maxY = p3.y;
-	}
-	//miny
-	if (p1.y <= p2.y && p1.y <= p3.y)
-	{
-		minY = p1.y;
-	}
-	if (p2.y <= p1.y && p2.y <= p3.y)
-	{
-		minY = p2.y;
-	}
-	if (p3.y <= p2.y && p3.y <= p1.y)
-	{
-		minY = p3.y;
-	}
-	*/
+
 	float minY = std::min(std::min(p1.y, p2.y), p3.y);
 	float maxY = std::max(std::max(p1.y, p2.y), p3.y);
 	float minX = std::min(std::min(p1.x, p2.x), p3.x);
@@ -850,7 +800,7 @@ void Renderer::DrawLights(const Scene& scene, glm::mat4x4& inverse, glm::mat4x4&
 {
 	int count = scene.Get_count_oflights();
 	glm::mat4x4 transmat;
-
+	/*
 	for (int i = 0; i < count; i++)
 	{
 		int t = scene.GetLight(i).Get_Type();
@@ -904,7 +854,34 @@ void Renderer::DrawLights(const Scene& scene, glm::mat4x4& inverse, glm::mat4x4&
 			
 		}
 	}
+	*/
 
+	for (int i = 0; i < count; i++)
+	{
+		std::shared_ptr<light> L = scene.GetLight(i);
+		colorShader.use();
+		colorShader.setUniform("light_trans", L->Get_transmatrix());
+		colorShader.setUniform("draw", true);
+		colorShader.setUniform("drawlight", false);
+		colorShader.setUniform("light_type",L->Get_Type());
+		colorShader.setUniform("view", scene.GetActiveCamera().Get_Lookat() * scene.GetActiveCamera().Get_Invtransmatrix());
+		colorShader.setUniform("projection", scene.GetActiveCamera().GetProjectionTransformation());
+		if (L->Get_Type() == 1)
+		{
+			glBindVertexArray(L->GetVAO());
+			glDrawArrays(GL_LINES, 0, 18);
+			glBindVertexArray(0);
+		}
+		else
+		{
+			// Drag our model's faces (triangles) in fill mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glBindVertexArray(L->GetVAO());
+			glDrawArrays(GL_POINTS, 0, 1);
+			glEnable(GL_PROGRAM_POINT_SIZE);
+			glBindVertexArray(0);
+		}
+	}
 }
 
 glm::vec3 Renderer::Ambient_color(glm::vec3& light, glm::vec3& model)
@@ -997,9 +974,9 @@ void Renderer::filltheTriangle_phong(const glm::vec3& p1, const glm::vec3& p2, c
 						 I = normalize(light.Get_Direction());
 					}
 					glm::vec3 n = Calc_z(i, j, p1, p2, p3, n1, n2, n3);
-					glm::vec3 c = Ambient_color(light.Get_Ambient_Color(), scene.GetActiveModel().Get_modelAmbient_Color());
-					c += Diffuse_Color(n, I, scene.GetActiveModel().Get_modelDiffuse_Color(), light);
-					c += Specular_Color(n, I, glm::normalize(scene.GetActiveCamera().Get_Eye()),scene.GetActiveModel().Get_modelSpecular_Color(),light);
+					glm::vec3 c = Ambient_color(light.Get_Ambient_Color(), scene.GetActiveModel()->Get_modelAmbient_Color());
+					c += Diffuse_Color(n, I, scene.GetActiveModel()->Get_modelDiffuse_Color(), light);
+					c += Specular_Color(n, I, glm::normalize(scene.GetActiveCamera().Get_Eye()),scene.GetActiveModel()->Get_modelSpecular_Color(),light);
 					
 					
 					color_buffer_[INDEX(viewport_width_, i, j, 0)] += c.x;
@@ -1113,3 +1090,99 @@ void Renderer::Fogfunc(const Scene& scene)
 			}
 		}
 }
+
+
+
+void Renderer::Render( Scene& scene)
+{
+	int cameraCount = scene.GetCameraCount();
+	if (cameraCount > 0)
+	{
+		int modelCount = scene.GetModelCount();
+		const Camera& camera = scene.GetActiveCamera();
+		 glm::vec3 ambient_l[5];
+		 glm::vec3 diffuse_l[5];
+		 glm::vec3 specular_l[5];
+		 glm::vec3 p_l[5];
+		 glm::vec3 d_l[5];
+		 glm::mat4 t_l[5];
+		 float type_l[5];
+		 if (scene.Get_count_oflights())
+		 {
+			 DrawLights(scene,glm::mat4(1), glm::mat4(1), glm::mat4(1), glm::mat4(1));
+		 }
+		for (int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
+		{
+
+			
+			std::shared_ptr<MeshModel> currentModel = scene.GetModel(currentModelIndex);
+
+			for (int i = 0; i < scene.Get_count_oflights(); i++)
+			{
+				std::shared_ptr<light> currentLight = scene.GetLight(i);
+				ambient_l[i] = currentLight->Get_Ambient_Color();
+				diffuse_l[i] = currentLight->Get_Diffuse_Color();
+				specular_l[i] = currentLight->Get_Specular_Color();
+				p_l[i] = currentLight->Get_Position();
+				t_l[i] = currentLight->Get_transmatrix();
+				d_l[i] = normalize(currentLight->Get_Direction());
+				type_l[i] = currentLight->Get_Type()- 1;
+			}
+			// Activate the 'colorShader' program (vertex and fragment shaders)
+			colorShader.use();
+			colorShader.setUniform("draw", false);
+			// Set the uniform variables
+			colorShader.setUniform("model", currentModel->Get_transmatrix());
+			colorShader.setUniform("view", camera.Get_Lookat() * camera.Get_Invtransmatrix());
+			colorShader.setUniform("projection", camera.GetProjectionTransformation());
+			colorShader.setUniform("eye", camera.Get_Eye());
+			colorShader.setUniform("ambient_l", ambient_l, scene.Get_count_oflights());
+			colorShader.setUniform("diffuse_l", diffuse_l, scene.Get_count_oflights());
+			colorShader.setUniform("specular_l", specular_l, scene.Get_count_oflights());
+			colorShader.setUniform("p_l", p_l, scene.Get_count_oflights());
+			colorShader.setUniform("t_l", t_l, scene.Get_count_oflights());
+			colorShader.setUniform("type_l", type_l, scene.Get_count_oflights());
+			colorShader.setUniform("d_l", d_l, scene.Get_count_oflights());
+			colorShader.setUniform("c", scene.Get_count_oflights());
+			colorShader.setUniform("drawlight", false);
+			colorShader.setUniform("material.textureMap", 0);
+			colorShader.setUniform("material.diffuse", scene.GetModel(currentModelIndex)->Get_modelDiffuse_Color());
+			colorShader.setUniform("material.specular", currentModel->Get_modelSpecular_Color());
+			colorShader.setUniform("material.ambient", currentModel->Get_modelAmbient_Color());
+			colorShader.setUniform("material.alpha", 2.f); // 
+			// Set 'texture1' as the active texture at slot #0
+			//texture1.bind(0);
+
+			// Drag our model's faces (triangles) in fill mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glBindVertexArray(currentModel->GetVAO());
+			glDrawArrays(GL_TRIANGLES, 0, currentModel->GetModelVertices().size());
+			glBindVertexArray(0);
+
+			// Unset 'texture1' as the active texture at slot #0
+			//texture1.unbind(0);
+
+			//colorShader.setUniform("color", glm::vec3(0, 0, 0));
+
+			// Drag our model's faces (triangles) in line mode (wireframe)
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			//glBindVertexArray(currentModel->GetVAO());
+			//glDrawArrays(GL_TRIANGLES, 0, currentModel->GetModelVertices().size());
+			//glBindVertexArray(0);
+		}
+	}
+}
+
+void Renderer::LoadShaders()
+{
+	colorShader.loadShaders("vshader.glsl", "fshader.glsl");
+}
+/*
+void Renderer::LoadTextures()
+{
+	if (!texture1.loadTexture("bin\\Debug\\crate.jpg", true))
+	{
+		texture1.loadTexture("bin\\Release\\crate.jpg", true);
+	}
+}
+*/

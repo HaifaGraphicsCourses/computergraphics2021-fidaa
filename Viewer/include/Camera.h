@@ -55,8 +55,8 @@ private:
 	float ortho_val = 0.5;
 	float left = -w / 2, right = w / 2;
 	float  bottom = -h / 2, top = h / 2;
-	float p_near = -0.1;
-	float p_far = 1000;
+	float p_near = 0.1f;
+	float p_far = 200;
 	glm::mat4x4 orthomatrix = glm::mat4(1.0f); /**/
 
 	//lookat

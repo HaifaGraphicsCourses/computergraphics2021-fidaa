@@ -2,11 +2,25 @@
 #include <glm/glm.hpp>
 #include <string>
 #include "Face.h"
+#include <glad/glad.h>
+#include <memory>
+#include "MeshModel.h"
+
+
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 textureCoords;
+};
 
 class MeshModel
 {
 public:
-	MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4 T,float MAX, float maxX, float maxY, float maxZ, float minX, float minY, float minZ);
+	//MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4 T,float MAX, float maxX, float maxY, float maxZ, float minX, float minY, float minZ);
+
+
+	MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& modelName, glm::mat4x4 T, float MAX, float maxX, float maxY, float maxZ, float minX, float minY, float minZ);
 	virtual ~MeshModel();
 	const Face& GetFace(int index) const;
 	int GetFacesCount() const;
@@ -55,6 +69,14 @@ public:
 	void Set_colorsvar(int c);
 	int Get_colorsvar() const;
 
+	const std::vector<Vertex>& GetModelVertices();
+	GLuint GetVAO() const;
+
+
+protected:
+	std::vector<Vertex> modelVertices;
+	GLuint vbo;
+	GLuint vao;
 
 
 
@@ -63,6 +85,15 @@ private:
 	std::vector<glm::vec3> vertices_;
 	std::vector<glm::vec3> normals_;
 	std::string model_name_;
+
+	std::string modelName;
+
+	glm::vec3 color;
+
+	std::vector<glm::vec3> textureCoords;
+
+	
+
 	glm::mat4x4 STmat;
 	glm::mat4x4 Tm = glm::mat4(1.0f);
 	glm::mat4x4 Tw = glm::mat4(1.0f);
@@ -88,4 +119,7 @@ private:
 	glm::vec3 Ambient_Color;
 	glm::vec3 Diffuse_Color;
 	glm::vec3 Specular_Color;
+
+	
+
 };

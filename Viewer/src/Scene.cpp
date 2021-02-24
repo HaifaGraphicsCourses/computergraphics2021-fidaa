@@ -18,15 +18,29 @@ int Scene::GetModelCount() const
 {
 	return mesh_models_.size();
 }
-
+/*
 MeshModel& Scene::GetModel(int index) const
 {
 	return *mesh_models_[index];
 }
 
+
+
 MeshModel& Scene::GetActiveModel() const
 {
 	return *mesh_models_[active_model_index_];
+}
+*/
+
+
+std::shared_ptr<MeshModel> Scene::GetModel(int index) const
+{
+	return mesh_models_[index];
+}
+
+std::shared_ptr<MeshModel> Scene::GetActiveModel() const
+{
+	return mesh_models_[active_model_index_];
 }
 
 void Scene::AddCamera(const std::shared_ptr<Camera>& camera)
@@ -86,9 +100,9 @@ int Scene::GetActiveLightIndex() const
 	return active_light_index_;
 }
 
-light& Scene::GetActivelight() const
+std::shared_ptr<light> Scene::GetActivelight() const
 {
-	return *lights_[active_light_index_];
+	return lights_[active_light_index_];
 }
 
 int Scene::Get_count_oflights() const
@@ -96,9 +110,9 @@ int Scene::Get_count_oflights() const
 	return this->count_oflights;
 }
 
-light& Scene::GetLight(int index) const
+std::shared_ptr<light> Scene::GetLight(int index) const
 {
-	return *lights_[index];
+	return lights_[index];
 }
 
 int Scene::GetshadingLight() const
