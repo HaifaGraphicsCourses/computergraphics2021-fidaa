@@ -715,8 +715,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
 			}
-
-
+			if (scene.GetActiveModel()->GetModelName() == "cheburashka.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 500.0f);
+			}
+			if (scene.GetActiveModel()->GetModelName() == "beetle.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 10.0f);
+			}
 			scene.GetActiveCamera().Set_OrthoGraphic(1, ortho_val);
 		}
 		else if (camera_current_proj == 1)

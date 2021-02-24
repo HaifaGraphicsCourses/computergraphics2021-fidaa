@@ -388,6 +388,14 @@ float MeshModel::Get_orthoGraphicVal()
 	{
 		ortho_val = 15.0f;
 	}
+	if (model_name_ == "cheburashka.obj")
+	{
+		ortho_val =100.0f;
+	}
+	if (model_name_ == "beetle.obj")
+	{
+		ortho_val = 5.0f;
+	}
 	return ortho_val;
 }
 
@@ -443,6 +451,14 @@ float MeshModel::Get_Zeye()
 	if (model_name_ == "teapot.obj")
 	{
 		eye_z = 10.0f;
+	}
+	if (model_name_ == "cheburashka.obj")
+	{
+		eye_z = 0.5f;
+	}
+	if (model_name_ == "beetle.obj")
+	{
+		eye_z = 0.5f;
 	}
 	return eye_z;
 }
