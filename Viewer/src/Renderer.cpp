@@ -220,7 +220,7 @@ void Renderer::InitOpenGLRendering()
 
 	// (-1, 1)____(1, 1)
 	//	     |\  |
-	//	     | \ | <--- The exture is drawn over two triangles that stretch over the screen.
+	//	     | \ | <--- The texture is drawn over two triangles that stretch over the screen.
 	//	     |__\|
 	// (-1,-1)    (1,-1)
 	const GLfloat vtc[]={
@@ -861,6 +861,7 @@ void Renderer::DrawLights(const Scene& scene, glm::mat4x4& inverse, glm::mat4x4&
 		std::shared_ptr<light> L = scene.GetLight(i);
 		colorShader.use();
 		colorShader.setUniform("light_trans", L->Get_transmatrix());
+		
 		colorShader.setUniform("draw", true);
 		colorShader.setUniform("drawlight", false);
 		colorShader.setUniform("light_type",L->Get_Type());
@@ -1145,6 +1146,7 @@ void Renderer::Render( Scene& scene)
 			colorShader.setUniform("d_l", d_l, scene.Get_count_oflights());
 			colorShader.setUniform("c", scene.Get_count_oflights());
 			colorShader.setUniform("drawlight", false);
+			colorShader.setUniform("ts", scene.GetshadingLight());
 			colorShader.setUniform("material.textureMap", 0);
 			colorShader.setUniform("material.diffuse", scene.GetModel(currentModelIndex)->Get_modelDiffuse_Color());
 			colorShader.setUniform("material.specular", currentModel->Get_modelSpecular_Color());
@@ -1183,8 +1185,8 @@ void Renderer::LoadShaders()
 
 void Renderer::LoadTextures()
 {
-	if (!texture1.loadTexture("bin\\Debug\\crate.jpg", true))
+	if (!texture1.loadTexture("C:\\Users\\lenovo\\Documents\\GitHub\\computergraphics2021-fidaa\\2.jpeg", true))
 	{
-		texture1.loadTexture("bin\\Release\\crate.jpg", true);
+		texture1.loadTexture("C:\\Users\\lenovo\\Documents\\GitHub\\computergraphics2021-fidaa\\2.jpeg", true);
 	}
 }

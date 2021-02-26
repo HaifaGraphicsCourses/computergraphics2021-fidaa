@@ -31,6 +31,14 @@ void main()
 	// will be avilable for us in the fragment shader
 	fragTexCoords = texCoords;
 
+	//float r=sqrt(pow(orig_fragPos.x,2)+pow(orig_fragPos.y,2)+pow(orig_fragPos.z,2));
+    //fragTexCoords.x =atan((sqrt(pow(orig_fragPos.x,2)+pow(orig_fragPos.y,2)))/orig_fragPos.z);			
+    //fragTexCoords.y = atan(orig_fragPos.y/orig_fragPos.x);
+
+	float theta =(atan(orig_fragPos.z,orig_fragPos.x)) + 3.14; 
+	fragTexCoords.x=theta;
+	fragTexCoords.y=orig_fragPos.y;
+
 	// This is an internal OpenGL variable, we must set a value to this variable
 	gl_Position = projection * view *  model * vec4(pos, 1.0f);
 
@@ -43,4 +51,5 @@ void main()
 
 
 	}
+	
 }

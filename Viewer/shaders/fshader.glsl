@@ -28,9 +28,7 @@ uniform mat4 t_l[5];
 uniform int type_l[5];
 uniform int c;
 uniform bool drawlight;
-
-
-
+uniform int ts;
 
 // Inputs from vertex shader (after interpolation was applied)
 in vec3 fragPos;
@@ -46,6 +44,8 @@ void main()
 	vec3 textureColor = vec3(texture(material.textureMap, fragTexCoords));
 	 vec3 ambient_c = vec3(0.f,0.f,0.f) , diffuse_c= vec3(0.f,0.f,0.f), specular_c= vec3(0.f,0.f,0.f);
 	 vec3 def_color=vec3(0.f,0.f,0.f),spec_color=vec3(0.f,0.f,0.f);
+	 float in2;
+	 vec4 diffuse2;
 	if(drawlight==true)
 		frag_color =vec4(1.f,1.f,1.f,1.f);
 	else
@@ -57,11 +57,13 @@ void main()
 			{
 				I=normalize(d_l[i]);
 			}
-			else
+			else if(type_l[i]==1)
 			{
 				vec3 position=vec3(t_l[i]*vec4(p_l[i],1)); 
 				I=normalize(fragPos - position);
 			}
+			in2=max(0.0, dot(I, fragNormal));
+
 			ambient_c+=vec3(ambient_l[i].x*material.ambient.x,ambient_l[i].y*material.ambient.y,ambient_l[i].z*material.ambient.z);
 
 			diffuse_c=vec3(diffuse_l[i].x*material.diffuse.x,diffuse_l[i].y*material.diffuse.y,diffuse_l[i].z*material.diffuse.z);
@@ -73,9 +75,38 @@ void main()
 			float power=pow(max(0.f,dot(r,normalize(eye))),material.alpha);
 			spec_color=specular_c*power;
 		}
+
 		if(c > 0)
+		{
+		    if(ts==2)
 			frag_color=vec4(ambient_c+def_color+spec_color,1.f);
+			else 
+			{
+			if (in2 > 0.95)      diffuse2 = vec4(1.0, 1.0, 1.0, 1.0);
+			else if (in2 > 0.75) diffuse2 = vec4(0.8, 0.8, 0.8, 1.0);
+			else if (in2 > 0.50) diffuse2 = vec4(0.6, 0.6, 0.6, 1.0);
+			else if (in2 > 0.25) diffuse2 = vec4(0.4, 0.4, 0.4, 1.0);
+			else                       diffuse2 = vec4(0.2, 0.2, 0.2, 1.0);
+			frag_color=diffuse2*vec4(ambient_c+def_color+spec_color,1.f);
+			//if(in2>0.95)
+			//{
+			//     diffuse2=vec3(1.f,1.f,1.f);
+			//}
+			//else if(in2>0.5)
+			//{
+		    //     diffuse2=vec3(0.6f,0.6f,0.6f);
+			//}
+			//else if(in2>0.05)
+			//{
+			//	diffuse2=vec3(0.4f,0.4f,0.4f);
+			//}
+			//else
+			//	diffuse2=vec3(0.1f,0.1f,0.1f);
+			//frag_color=vec4((ambient_c+(def_color)*diffuse2+spec_color),1.f);
+			}
+		}
 		else	
 			frag_color=vec4(material.ambient,1.f);
 	}
+	//frag_color=vec4(textureColor,1.f);
 }
