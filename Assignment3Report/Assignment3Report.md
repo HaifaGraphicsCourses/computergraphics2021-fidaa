@@ -1,4 +1,4 @@
-# Assignment3:
+# Assignment3Report
 
 ## Renderer::InitOpenGLRendering():
 Before this part,We used this function to render the obj, and now we render the obj using OpenGL, 
@@ -126,7 +126,6 @@ void Renderer::Render( Scene& scene)
 ~~~
 
 ### Implement Phong shading in the fragment shade:
-#### this is an example of parallel light,lighting the car obj:
 
 #### point light:
 ![armadilo](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/armadilo.JPG)
