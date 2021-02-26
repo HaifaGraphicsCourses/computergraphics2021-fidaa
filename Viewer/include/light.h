@@ -49,7 +49,7 @@ private:
 
 	glm::vec3 Direction;
 	glm::vec3 Position = glm::vec3(0,0, 0 );
-	glm::vec3 parallel = glm::vec3(0.07, 0.02, 0);
+	glm::vec3 parallel = glm::vec3(0.7, 0.2, 0);
 	
 	int Type; // 1 (Parallel) , 2 (Point) , 3 (Ambient)
 

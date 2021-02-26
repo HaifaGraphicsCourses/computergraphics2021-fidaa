@@ -37,22 +37,6 @@ light::light(glm::vec3 p, int type)
 		glGenVertexArrays(1, &Vao_l);
 		
 	}
-	else
-	{
-		glm::vec3 direction = normalize(Direction);
-		direction = 0.014f * direction + parallel;
-		float point[24] = { parallel.x, parallel.y, parallel.z,direction.x, direction.y, direction.z,
-							parallel.x + 0.005, parallel.y, parallel.z,direction.x + 0.005, direction.y, direction.z,
-							parallel.x + 0.006, parallel.y, parallel.z,direction.x + 0.006, direction.y, direction.z,
-							parallel.x + 0.007, parallel.y, parallel.z,direction.x + 0.007, direction.y, direction.z };
-		glGenVertexArrays(1, &Vao_l);
-		glGenBuffers(1, &Vbo_l);
-		glBindVertexArray(Vao_l);
-		glBindBuffer(GL_ARRAY_BUFFER, Vbo_l);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(point), &point, GL_STATIC_DRAW);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-	}
 }
 
 

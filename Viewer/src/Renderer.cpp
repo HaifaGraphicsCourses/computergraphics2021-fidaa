@@ -1113,9 +1113,7 @@ void Renderer::Render( Scene& scene)
 			 DrawLights(scene,glm::mat4(1), glm::mat4(1), glm::mat4(1), glm::mat4(1));
 		 }
 		for (int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
-		{
-
-			
+		{		
 			std::shared_ptr<MeshModel> currentModel = scene.GetModel(currentModelIndex);
 
 			for (int i = 0; i < scene.Get_count_oflights(); i++)
@@ -1127,7 +1125,7 @@ void Renderer::Render( Scene& scene)
 				p_l[i] = currentLight->Get_Position();
 				t_l[i] = currentLight->Get_transmatrix();
 				d_l[i] = normalize(currentLight->Get_Direction());
-				type_l[i] = currentLight->Get_Type()- 1;
+				type_l[i] = currentLight->Get_Type();
 			}
 			// Activate the 'colorShader' program (vertex and fragment shaders)
 			colorShader.use();
@@ -1148,7 +1146,7 @@ void Renderer::Render( Scene& scene)
 			colorShader.setUniform("drawlight", false);
 			colorShader.setUniform("ts", scene.GetshadingLight());
 			colorShader.setUniform("material.textureMap", 0);
-			colorShader.setUniform("material.diffuse", scene.GetModel(currentModelIndex)->Get_modelDiffuse_Color());
+			colorShader.setUniform("material.diffuse", currentModel->Get_modelDiffuse_Color());
 			colorShader.setUniform("material.specular", currentModel->Get_modelSpecular_Color());
 			colorShader.setUniform("material.ambient", currentModel->Get_modelAmbient_Color());
 			colorShader.setUniform("material.alpha", 2.f); // 
@@ -1185,6 +1183,10 @@ void Renderer::LoadShaders()
 
 void Renderer::LoadTextures()
 {
+	//if (!texture1.loadTexture("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-fidaa\\2.jpeg", true))
+	//{
+	//	texture1.loadTexture("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-fidaa\\2.jpeg", true);
+	//}
 	if (!texture1.loadTexture("C:\\Users\\lenovo\\Documents\\GitHub\\computergraphics2021-fidaa\\2.jpeg", true))
 	{
 		texture1.loadTexture("C:\\Users\\lenovo\\Documents\\GitHub\\computergraphics2021-fidaa\\2.jpeg", true);

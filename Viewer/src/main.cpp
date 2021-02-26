@@ -667,6 +667,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		if (camera_current_proj == 0)
 		{
+			if (scene.GetActiveModel()->GetModelName() == "horse.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
+			}
+			if (scene.GetActiveModel()->GetModelName() == "armadilo.obj")
+			{
+				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
+			}
 			if (scene.GetActiveModel()->GetModelName() == "banana.obj")
 			{
 				ImGui::SliderFloat("orthographic width", &ortho_val, 0.1f, 1.5f);
@@ -939,7 +947,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (ImGui::Button("ADD"))
 		{
 			counter++;
-			std::shared_ptr<light>& new_light = std::make_shared<light>(glm::vec3(0,0,0), LightType + 1);
+			std::shared_ptr<light>& new_light = std::make_shared<light>(scene.GetActiveModel()->center , LightType + 1);
 			(*new_light).Set_Ambient_Color(glm::vec3(ambientcolor[0], ambientcolor[1], ambientcolor[2]));
 			(*new_light).Set_Diffuse_Color(glm::vec3(diffusecolor[0], diffusecolor[1], diffusecolor[2]));
 			(*new_light).Set_Specular_Color(glm::vec3(specularcolor[0], specularcolor[1], specularcolor[2]));
@@ -1175,9 +1183,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				}
 			}
 		}
-		static int shadingtype = 0;
-		//ImGui::RadioButton("flat", &shadingtype,0);
-		ImGui::RadioButton("ts", &shadingtype,1);
+		static int shadingtype = 2;
+		ImGui::RadioButton("texture", &shadingtype,0);
+		ImGui::RadioButton("toon shading", &shadingtype,1);
 		ImGui::RadioButton("phong", &shadingtype,2);
 		scene.Setshading(shadingtype);
 

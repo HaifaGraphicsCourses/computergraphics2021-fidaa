@@ -54,7 +54,7 @@ MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, s
 	std::mt19937 mt(rd());
 	std::uniform_real_distribution<double> dist(0, 1);
 	color = glm::vec3(dist(mt), dist(mt), dist(mt));
-
+	center=glm::vec3((maxX + minX) / 2, (maxY + minY) / 2, (minZ + maxZ) / 2);
 	modelVertices.reserve(3 * faces.size());
 	for (int i = 0; i < faces.size(); i++)
 	{

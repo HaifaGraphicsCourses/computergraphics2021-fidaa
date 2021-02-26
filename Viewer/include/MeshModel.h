@@ -57,7 +57,7 @@ public:
 	 glm::vec3 Get_modelAmbient_Color() const;
 	 glm::vec3 Get_modelDiffuse_Color() const;
 	 glm::vec3 Get_modelSpecular_Color() const;
-	
+	 glm::vec3 center;
 	void Set_facenormals(int fn);
 	void Set_vernormals(int vn);
 	int Get_facenormals()const;
@@ -99,7 +99,6 @@ private:
 	glm::mat4x4 Rw_x = glm::mat4(1.0f);
 	glm::mat4x4 Rw_y = glm::mat4(1.0f);
 	glm::mat4x4 Rw_z = glm::mat4(1.0f);
-
 	glm::mat4x4 Sw = glm::mat4(1.0f);
 	glm::mat4x4 Rm = glm::mat4(1.0f);
 	glm::mat4x4 Rm_x = glm::mat4(1.0f);
