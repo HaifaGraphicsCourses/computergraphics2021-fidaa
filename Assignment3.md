@@ -2,7 +2,7 @@
 
 ## Renderer::InitOpenGLRendering():
 Before this part,We used this function to render the obj, and now we render the obj using OpenGL, 
-in this function we prepare the information we need for drawing (the VAO for example),to help us draw we create two triangles that stretch over the screen, The texture is drawn over them.so we used to draw using the color buffer,and The SwapBuffer() function loads color buffer into a texture on the GPU, in other words we the function maps the pixels in the image to the texture coordinates (the triangles), and as we mentions before those triangles build the screen.
+in this function we prepare the information we need for drawing (the VAO for example),to help us draw we create two triangles that stretch over the screen, The texture is drawn over them.so we used to draw using the color buffer,and The SwapBuffer() function loads color buffer into a texture on the GPU, in other words the function maps the pixels in the image to the texture coordinates (the triangles), and as we mentions before those triangles build the screen.
 
 
 ## vertex shader:
@@ -128,22 +128,19 @@ void Renderer::Render( Scene& scene)
 ### Implement Phong shading in the fragment shade:
 #### this is an example of parallel light,lighting the car obj:
 
-![parallel_light_white](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/parallel_light_white.png)
-
-#### the car after changing colors:
-![parallel_diff_colors1](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/parallel_diff_colors1.png)
-
-#### after transformation:
-![1withTransformation](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/1withTransformation.png)
-
 #### point light:
 ![armadilo](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/armadilo.JPG)
+#### parallel light:
+![anotherex](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/anotherex.png)
+
+![horse](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/horse.JPG)
 
 #### example for more than one light:
 ![beethoven](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/beethoven.JPG)
-#### more examples: 
-![anotherex](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/anotherex.png)
-![horse](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/horse.JPG)
+ 
+ #### more examples:
+![cowm9loba](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/cowm9loba.png)
+![m9lob](https://github.com/HaifaGraphicsCourses/computergraphics2021-fidaa/blob/master/bem9lob.png)
 
 ### texture mapping:
 #### plane texture:
